@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AQUASCAN AI | Features</title>
+
+<style>
+
+/* =========================
+   GLOBAL
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#020913;
+    color:#fff;
+    overflow-x:hidden;
+}
+
+
+/* =========================
+   NAVBAR
+========================= */
+
+nav{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:70px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 7%;
+
+    background:rgba(1,8,17,.88);
+
+    backdrop-filter:blur(16px);
+
+    border-bottom:1px solid rgba(0,217,255,.15);
+
+    z-index:1000;
+}
+
+
+/* BRAND */
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    text-decoration:none;
+    color:white;
+
+    cursor:pointer;
+}
+
+.brand img{
+    width:38px;
+    height:38px;
+
+    object-fit:contain;
+
+    border-radius:50%;
+
+    filter:
+        drop-shadow(
+            0 0 8px
+            rgba(0,217,255,.45)
+        );
+}
+
+.brand-name{
+    font-size:19px;
+    letter-spacing:3px;
+    font-weight:bold;
+}
+
+.brand-name span{
+    color:#00e5a0;
+}
+
+
+/* RIGHT NAV */
+
+.nav-right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.home-link{
+    color:#00e5a0;
+
+    text-decoration:none;
+
+    font-size:14px;
+
+    font-weight:bold;
+}
+
+
+/* MENU BUTTON */
+
+.menu-btn{
+    width:42px;
+    height:42px;
+
+    border:1px solid rgba(0,217,255,.3);
+
+    border-radius:10px;
+
+    background:rgba(0,217,255,.06);
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:5px;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.menu-btn span{
+    width:19px;
+    height:2px;
+
+    background:#00e5a0;
+
+    border-radius:5px;
+}
+
+.menu-btn:hover{
+    border-color:#00e5a0;
+
+    box-shadow:
+        0 0 20px
+        rgba(0,229,160,.18);
+}
+
+
+/* =========================
+   SIDE MENU
+========================= */
+
+.menu-panel{
+    position:fixed;
+
+    top:70px;
+    right:-300px;
+
+    width:270px;
+
+    background:rgba(2,13,24,.97);
+
+    border-left:1px solid #123c4d;
+
+    border-bottom:1px solid #123c4d;
+
+    padding:25px;
+
+    z-index:999;
+
+    transition:.35s;
+
+    box-shadow:
+        -10px 15px 50px
+        rgba(0,0,0,.4);
+}
+
+.menu-panel.active{
+    right:0;
+}
+
+.menu-title{
+    color:#00e5a0;
+
+    font-size:12px;
+
+    letter-spacing:2px;
+
+    margin-bottom:18px;
+}
+
+.menu-panel a{
+    display:block;
+
+    color:#b7cbd4;
+
+    text-decoration:none;
+
+    padding:13px 10px;
+
+    border-radius:8px;
+
+    margin-bottom:5px;
+
+    transition:.25s;
+}
+
+.menu-panel a:hover{
+    background:
+        rgba(0,217,255,.08);
+
+    color:#00e5a0;
+}
+
+
+/* =========================
+   PAGE HERO
+========================= */
+
+.hero{
+
+    min-height:75vh;
+
+    padding:150px 8% 90px;
+
+    display:flex;
+
+    align-items:center;
+
+    position:relative;
+
+    overflow:hidden;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            rgba(1,8,16,.90) 0%,
+            rgba(1,12,22,.70) 48%,
+            rgba(0,20,32,.35) 100%
+        ),
+
+        url("underwater_hero_background.png");
+
+    background-size:cover;
+
+    background-position:center;
+}
+
+.hero::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+        radial-gradient(
+            circle at 75% 40%,
+            rgba(0,229,160,.12),
+            transparent 28%
+        );
+
+    pointer-events:none;
+}
+
+.hero-content{
+
+    position:relative;
+
+    z-index:5;
+
+    max-width:760px;
+
+    animation:
+        heroContent 1.1s ease
+        forwards;
+}
+
+@keyframes heroContent{
+
+    from{
+        opacity:0;
+        transform:translateY(25px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.label{
+
+    color:#00e5a0;
+
+    font-size:11px;
+
+    letter-spacing:2px;
+
+    margin-bottom:15px;
+
+    text-transform:uppercase;
+}
+
+.hero h1{
+
+    font-size:
+        clamp(45px,6vw,70px);
+
+    line-height:1.02;
+
+    margin-bottom:22px;
+
+    letter-spacing:-2px;
+}
+
+.hero h1 span{
+
+    color:#00e5a0;
+
+    text-shadow:
+        0 0 25px
+        rgba(0,229,160,.18);
+}
+
+.hero p{
+
+    color:#bdd0d8;
+
+    line-height:1.8;
+
+    font-size:16px;
+
+    max-width:700px;
+}
+
+
+/* =========================
+   GENERAL SECTION
+========================= */
+
+.section{
+
+    padding:100px 8%;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            #020b15,
+            #020913
+        );
+}
+
+.section:nth-of-type(odd){
+
+    background:
+        #03111e;
+}
+
+.section-title{
+
+    max-width:700px;
+
+    margin-bottom:48px;
+}
+
+.section-title h2{
+
+    font-size:40px;
+
+    line-height:1.15;
+
+    margin:12px 0 18px;
+}
+
+.section-title h2 span{
+
+    color:#00e5a0;
+}
+
+.section-title p{
+
+    color:#8199a7;
+
+    line-height:1.75;
+
+    font-size:15px;
+}
+
+
+/* =========================
+   FEATURE GRID
+========================= */
+
+.grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:20px;
+}
+
+.feature{
+
+    padding:30px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(8,30,43,.94),
+            rgba(3,15,25,.94)
+        );
+
+    border:
+        1px solid #123344;
+
+    border-radius:16px;
+
+    transition:.3s;
+
+    backdrop-filter:blur(8px);
+}
+
+.feature:hover{
+
+    transform:translateY(-7px);
+
+    border-color:#00e5a0;
+
+    box-shadow:
+        0 15px 40px
+        rgba(0,0,0,.3);
+}
+
+.icon{
+
+    width:52px;
+    height:52px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:
+        rgba(0,229,160,.07);
+
+    border:
+        1px solid
+        rgba(0,229,160,.18);
+
+    font-size:26px;
+
+    margin-bottom:20px;
+}
+
+.feature h3{
+
+    font-size:18px;
+
+    margin-bottom:12px;
+}
+
+.feature p{
+
+    color:#8199a7;
+
+    font-size:14px;
+
+    line-height:1.7;
+}
+
+
+/* =========================
+   HOW IT WORKS
+========================= */
+
+.steps{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:20px;
+}
+
+.step{
+
+    position:relative;
+
+    padding:28px;
+
+    border:
+        1px solid #123344;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(8,30,43,.94),
+            rgba(3,15,25,.94)
+        );
+
+    border-radius:15px;
+
+    transition:.3s;
+}
+
+.step:hover{
+
+    transform:translateY(-5px);
+
+    border-color:#00e5a0;
+
+    box-shadow:
+        0 15px 35px
+        rgba(0,0,0,.25);
+}
+
+.number{
+
+    color:#00e5a0;
+
+    font-size:30px;
+
+    font-weight:bold;
+
+    margin-bottom:17px;
+}
+
+.step h3{
+
+    margin-bottom:10px;
+
+    font-size:17px;
+}
+
+.step p{
+
+    color:#8199a7;
+
+    font-size:13px;
+
+    line-height:1.7;
+}
+
+
+/* =========================
+   TECHNOLOGY
+========================= */
+
+.tech-list{
+
+    display:grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap:20px;
+}
+
+.tech{
+
+    padding:27px;
+
+    border-left:
+        3px solid #00e5a0;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(8,30,43,.94),
+            rgba(3,15,25,.94)
+        );
+
+    border-radius:10px;
+
+    transition:.3s;
+}
+
+.tech:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(0,0,0,.25);
+}
+
+.tech h3{
+
+    margin-bottom:10px;
+
+    color:#00d9ff;
+
+    font-size:18px;
+}
+
+.tech p{
+
+    color:#8199a7;
+
+    line-height:1.7;
+
+    font-size:14px;
+}
+
+
+/* =========================
+   DEVELOPER
+========================= */
+
+.developer{
+
+    text-align:center;
+
+    padding:110px 8%;
+
+    background:
+
+        radial-gradient(
+            circle at center,
+            rgba(0,229,160,.08),
+            transparent 45%
+        ),
+
+        #020913;
+}
+
+.developer h2{
+
+    font-size:42px;
+
+    margin-bottom:18px;
+}
+
+.developer h2 span{
+
+    color:#00e5a0;
+}
+
+.developer p{
+
+    max-width:720px;
+
+    margin:auto;
+
+    color:#8199a7;
+
+    line-height:1.8;
+
+    font-size:15px;
+}
+
+
+/* =========================
+   LOGO POPUP
+========================= */
+
+.logo-popup{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(0,0,0,.88);
+
+    backdrop-filter:blur(8px);
+
+    z-index:10000;
+
+    justify-content:center;
+
+    align-items:center;
+
+    padding:30px;
+}
+
+.logo-popup img{
+
+    width:min(520px,90vw);
+
+    max-height:85vh;
+
+    object-fit:contain;
+
+    border-radius:50%;
+
+    box-shadow:
+
+        0 0 30px
+        rgba(0,217,255,.35),
+
+        0 0 70px
+        rgba(0,229,160,.18);
+
+    animation:
+        logoPopupIn .35s ease;
+}
+
+.close-logo{
+
+    position:absolute;
+
+    top:25px;
+
+    right:35px;
+
+    font-size:42px;
+
+    color:white;
+
+    cursor:pointer;
+
+    line-height:1;
+
+    z-index:10001;
+}
+
+.close-logo:hover{
+
+    color:#00e5a0;
+}
+
+@keyframes logoPopupIn{
+
+    from{
+
+        opacity:0;
+
+        transform:scale(.75);
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:scale(1);
+    }
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+footer{
+
+    text-align:center;
+
+    padding:30px 7%;
+
+    color:#526d7a;
+
+    border-top:
+        1px solid #123344;
+
+    background:#020913;
+
+    font-size:12px;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+    .grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .steps{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .tech-list{
+
+        grid-template-columns:1fr;
+    }
+}
+
+
+@media(max-width:650px){
+
+    nav{
+
+        padding:0 5%;
+    }
+
+    .brand img{
+
+        width:34px;
+        height:34px;
+    }
+
+    .brand-name{
+
+        font-size:15px;
+
+        letter-spacing:2px;
+    }
+
+    .home-link{
+
+        display:none;
+    }
+
+    .hero{
+
+        min-height:70vh;
+
+        padding:
+            120px 7% 80px;
+
+        background-position:center;
+    }
+
+    .hero h1{
+
+        font-size:46px;
+    }
+
+    .section{
+
+        padding:
+            80px 7%;
+    }
+
+    .grid,
+    .steps{
+
+        grid-template-columns:1fr;
+    }
+
+    .section-title h2{
+
+        font-size:32px;
+    }
+
+    .developer h2{
+
+        font-size:32px;
+    }
+
+    .close-logo{
+
+        top:20px;
+
+        right:25px;
+
+        font-size:38px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     NAVBAR
+========================= -->
+
+<nav>
+
+
+    <div
+        class="brand"
+        onclick="openLogoPopup()">
+
+        <img
+            src="Logo.png"
+            alt="AQUASCAN AI Logo">
+
+
+        <div class="brand-name">
+
+            AQUASCAN <span>AI</span>
+
+        </div>
+
+    </div>
+
+
+    <div class="nav-right">
+
+
+        <a
+            href="index.html"
+            class="home-link">
+
+            Home
+
+        </a>
+
+
+        <button
+            class="menu-btn"
+            onclick="toggleMenu()">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </button>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================
+     SIDE MENU
+========================= -->
+
+<div
+    class="menu-panel"
+    id="menuPanel">
+
+
+    <div class="menu-title">
+
+        AQUASCAN AI
+
+    </div>
+
+
+    <a href="dashboard.html">
+
+        📡 Dashboard
+
+    </a>
+
+
+    <a href="reports.html">
+
+        📊 Detection Reports
+
+    </a>
+
+
+    <a href="features.html">
+
+        🌊 Features
+
+    </a>
+
+
+    <a href="features.html#how">
+
+        ⚙ How It Works
+
+    </a>
+
+
+    <a href="index.html#mission">
+
+        🎯 Mission
+
+    </a>
+
+
+    <a href="index.html#project-core">
+
+        🧠 Project Core
+
+    </a>
+
+    <a href="index.html#development">
+    🚀 Development Focus
+    </a>
+
+    <a href="index.html#future">
+    🔭 Future Scope
+    </a>
+
+    <a href="developer.html">
+
+        👨‍💻 Developer
+
+    </a>
+
+</div>
+
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+
+    <div class="hero-content">
+
+
+        <div class="label">
+
+            UNDERWATER EXPLORATION
+
+        </div>
+
+
+        <h1>
+
+            Discover What Lies
+            <span>Beneath.</span>
+
+        </h1>
+
+
+        <p>
+
+            AQUASCAN AI is an AI-powered underwater
+            intelligence platform designed to analyse
+            Side-Scan Sonar imagery and assist in detecting
+            underwater objects and anomalies.
+
+        </p>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     PROJECT OVERVIEW
+========================= -->
+
+<section class="section">
+
+
+    <div class="section-title">
+
+
+        <div class="label">
+
+            ABOUT AQUASCAN AI
+
+        </div>
+
+
+        <h2>
+
+            From sonar imagery to
+            <span>intelligent insights.</span>
+
+        </h2>
+
+
+        <p>
+
+            AQUASCAN AI provides a streamlined workflow
+            for analysing underwater sonar imagery.
+            Instead of manually inspecting large amounts
+            of sonar data, the platform assists users with
+            AI-based object detection and result visualization.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="grid">
+
+
+        <div class="feature">
+
+            <div class="icon">
+                🌊
+            </div>
+
+            <h3>
+                Underwater Intelligence
+            </h3>
+
+            <p>
+                Converts complex underwater sonar imagery
+                into easier-to-understand detection results.
+            </p>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="icon">
+                📡
+            </div>
+
+            <h3>
+                Side-Scan Sonar
+            </h3>
+
+            <p>
+                Works with Side-Scan Sonar imagery to analyse
+                underwater scenes and identify detectable
+                sonar objects.
+            </p>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="icon">
+                🧠
+            </div>
+
+            <h3>
+                Computer Vision
+            </h3>
+
+            <p>
+                AI-based computer vision models process
+                sonar imagery and produce object predictions.
+            </p>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="icon">
+                🎯
+            </div>
+
+            <h3>
+                Confidence Scoring
+            </h3>
+
+            <p>
+                Each model prediction can include a confidence
+                value that helps users understand prediction
+                certainty.
+            </p>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="icon">
+                📊
+            </div>
+
+            <h3>
+                Detection Dashboard
+            </h3>
+
+            <p>
+                A centralized dashboard allows users to upload
+                sonar images and review AI detection results.
+            </p>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="icon">
+                📁
+            </div>
+
+            <h3>
+                Analysis History
+            </h3>
+
+            <p>
+                Previous detection results can be stored and
+                reviewed through the report history interface.
+            </p>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="icon">
+                🔍
+            </div>
+
+            <h3>
+                Object Localization
+            </h3>
+
+            <p>
+                Detected objects can be represented using
+                bounding boxes to indicate their approximate
+                location in the sonar image.
+            </p>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="icon">
+                ⚡
+            </div>
+
+            <h3>
+                Fast AI Inference
+            </h3>
+
+            <p>
+                The AI inference pipeline processes uploaded
+                images and returns detection results through
+                the application backend.
+            </p>
+
+        </div>
+
+
+        <div class="feature">
+
+            <div class="icon">
+                🖥️
+            </div>
+
+            <h3>
+                User-Friendly Interface
+            </h3>
+
+            <p>
+                A clean dashboard design makes sonar analysis
+                easier for researchers, marine teams and
+                technology users.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     HOW IT WORKS
+========================= -->
+
+<section
+    class="section"
+    id="how">
+
+
+    <div class="section-title">
+
+
+        <div class="label">
+
+            WORKFLOW
+
+        </div>
+
+
+        <h2>
+
+            Simple Process.
+            <span>Powerful Results.</span>
+
+        </h2>
+
+
+        <p>
+
+            AQUASCAN AI follows a straightforward workflow
+            from sonar image input to AI-generated detection
+            results and reports.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="steps">
+
+
+        <div class="step">
+
+            <div class="number">
+                01
+            </div>
+
+            <h3>
+                Upload Sonar Image
+            </h3>
+
+            <p>
+                The user uploads a Side-Scan Sonar image
+                through the AQUASCAN AI dashboard.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="number">
+                02
+            </div>
+
+            <h3>
+                AI Processing
+            </h3>
+
+            <p>
+                The backend sends the image to the AI model
+                for object detection and confidence estimation.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="number">
+                03
+            </div>
+
+            <h3>
+                View Results
+            </h3>
+
+            <p>
+                Detected objects, confidence scores and
+                bounding boxes are displayed on the dashboard.
+            </p>
+
+        </div>
+
+
+        <div class="step">
+
+            <div class="number">
+                04
+            </div>
+
+            <h3>
+                Generate Report
+            </h3>
+
+            <p>
+                Analysis results can be stored and reviewed
+                later through the detection reports page.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     TECHNOLOGY
+========================= -->
+
+<section
+    class="section"
+    id="technology">
+
+
+    <div class="section-title">
+
+
+        <div class="label">
+
+            TECHNOLOGY
+
+        </div>
+
+
+        <h2>
+
+            Built with modern
+            <span>AI technology.</span>
+
+        </h2>
+
+
+        <p>
+
+            The platform combines a web interface,
+            Python backend and computer-vision based
+            AI inference pipeline.
+
+        </p>
+
+    </div>
+
+
+
+    <div class="tech-list">
+
+
+        <div class="tech">
+
+            <h3>
+                AI / Computer Vision
+            </h3>
+
+            <p>
+                YOLO-based object detection is used to
+                process sonar imagery and identify trained
+                object categories.
+            </p>
+
+        </div>
+
+
+        <div class="tech">
+
+            <h3>
+                Python Backend
+            </h3>
+
+            <p>
+                Flask provides the backend API responsible
+                for receiving images, running inference and
+                returning detection results.
+            </p>
+
+        </div>
+
+
+        <div class="tech">
+
+            <h3>
+                Web Interface
+            </h3>
+
+            <p>
+                HTML, CSS and JavaScript provide the
+                interactive dashboard and visualization
+                experience.
+            </p>
+
+        </div>
+
+
+        <div class="tech">
+
+            <h3>
+                Detection Visualization
+            </h3>
+
+            <p>
+                Bounding boxes and confidence values help
+                users visually understand the model output.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     DEVELOPER
+========================= -->
+
+<section
+    class="developer"
+    id="developer">
+
+
+    <div class="label">
+
+        DEVELOPMENT
+
+    </div>
+
+
+    <h2>
+
+        Built by <span>THRYVEX</span>
+
+    </h2>
+
+
+    <p>
+
+        AQUASCAN AI is developed as an innovative underwater
+        intelligence solution focused on applying artificial
+        intelligence and computer vision to Side-Scan Sonar
+        imagery. The project combines AI, software engineering,
+        data processing and an intuitive user interface into
+        one integrated platform.
+
+    </p>
+
+</section>
+
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    AQUASCAN AI • THRYVEX • Underwater Intelligence Platform
+
+</footer>
+
+
+
+<!-- =========================
+     LOGO POPUP
+========================= -->
+
+<div
+    id="logoPopup"
+    class="logo-popup"
+    onclick="closeLogoPopup(event)">
+
+
+    <span
+        class="close-logo"
+        onclick="closeLogoPopup()">
+
+        &times;
+
+    </span>
+
+
+    <img
+        src="Logo.png"
+        alt="THRYVEX Team Logo">
+
+</div>
+
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+
+/* =========================
+   MENU
+========================= */
+
+function toggleMenu(){
+
+    const menu =
+        document.getElementById(
+            "menuPanel"
+        );
+
+    menu.classList.toggle(
+        "active"
+    );
+
+}
+
+
+document.addEventListener(
+    "click",
+    function(event){
+
+        const menu =
+            document.getElementById(
+                "menuPanel"
+            );
+
+        const button =
+            document.querySelector(
+                ".menu-btn"
+            );
+
+
+        if(
+
+            !menu.contains(
+                event.target
+            )
+
+            &&
+
+            !button.contains(
+                event.target
+            )
+
+        ){
+
+            menu.classList.remove(
+                "active"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================
+   LOGO POPUP
+========================= */
+
+function openLogoPopup(){
+
+    document.getElementById(
+        "logoPopup"
+    ).style.display = "flex";
+
+}
+
+
+function closeLogoPopup(event){
+
+    if(
+
+        event
+
+        &&
+
+        event.target !==
+        document.getElementById(
+            "logoPopup"
+        )
+
+    ){
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "logoPopup"
+    ).style.display = "none";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

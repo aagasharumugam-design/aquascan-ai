@@ -1,0 +1,4144 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AQUASCAN AI | Detection Reports</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: #020913;
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      /* NAV BAR */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 7%;
+        background: rgba(1, 8, 17, 0.88);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(0, 217, 255, 0.15);
+        z-index: 1000;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        color: white;
+        cursor: pointer;
+      }
+
+      .brand img {
+        width: 38px;
+        height: 38px;
+        object-fit: contain;
+        border-radius: 50%;
+        filter: drop-shadow(0 0 8px rgba(0, 217, 255, 0.45));
+      }
+
+      .brand-text {
+        font-size: 19px;
+        letter-spacing: 3px;
+        font-weight: bold;
+      }
+
+      .brand-text span {
+        color: #00e5a0;
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .home-link {
+        color: #00e5a0;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      .menu-btn {
+        width: 42px;
+        height: 42px;
+        border: 1px solid rgba(0, 217, 255, 0.3);
+        border-radius: 10px;
+        background: rgba(0, 217, 255, 0.06);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      .menu-btn span {
+        width: 19px;
+        height: 2px;
+        background: #00e5a0;
+        border-radius: 5px;
+      }
+
+      .menu-btn:hover {
+        border-color: #00e5a0;
+        box-shadow: 0 0 20px rgba(0, 229, 160, 0.18);
+      }
+
+      /* SIDE MENU */
+      .menu-panel {
+        position: fixed;
+        top: 70px;
+        right: -300px;
+        width: 270px;
+        background: rgba(2, 13, 24, 0.97);
+        border-left: 1px solid #123c4d;
+        border-bottom: 1px solid #123c4d;
+        padding: 25px;
+        z-index: 999;
+        transition: 0.35s;
+        box-shadow: -10px 15px 50px rgba(0, 0, 0, 0.4);
+      }
+
+      .menu-panel.active {
+        right: 0;
+      }
+
+      .menu-title {
+        color: #00e5a0;
+        font-size: 12px;
+        letter-spacing: 2px;
+        margin-bottom: 18px;
+      }
+
+      .menu-panel a {
+        display: block;
+        color: #b7cbd4;
+        text-decoration: none;
+        padding: 13px 10px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        transition: 0.25s;
+      }
+
+      .menu-panel a:hover {
+        background: rgba(0, 217, 255, 0.08);
+        color: #00e5a0;
+      }
+
+      /* PAGE CONTAINER */
+      .page {
+        min-height: 100vh;
+        padding: 120px 8% 80px;
+        position: relative;
+        overflow: hidden;
+        background:
+          linear-gradient(
+            90deg,
+            rgba(1, 8, 16, 0.9) 0%,
+            rgba(1, 12, 22, 0.72) 48%,
+            rgba(0, 20, 32, 0.55) 100%
+          ),
+          url("underwater_hero_background.png");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+      }
+
+      .page::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            circle at 75% 25%,
+            rgba(0, 229, 160, 0.1),
+            transparent 28%
+          ),
+          linear-gradient(180deg, rgba(2, 9, 19, 0.25), rgba(2, 9, 19, 0.8));
+        pointer-events: none;
+      }
+
+      .page-content {
+        position: relative;
+        z-index: 5;
+        max-width: 1200px;
+        margin: auto;
+      }
+
+      .heading {
+        margin-bottom: 30px;
+        animation: reportHeading 1s ease forwards;
+      }
+
+      @keyframes reportHeading {
+        from {
+          opacity: 0;
+          transform: translateY(25px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .heading .label {
+        color: #00e5a0;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .heading h1 {
+        font-size: clamp(38px, 5vw, 58px);
+        line-height: 1;
+        margin-bottom: 16px;
+        letter-spacing: -2px;
+      }
+
+      .heading h1 span {
+        color: #00e5a0;
+        text-shadow: 0 0 25px rgba(0, 229, 160, 0.18);
+      }
+
+      .heading p {
+        color: #a2b7c2;
+        font-size: 15px;
+        line-height: 1.7;
+        max-width: 650px;
+      }
+
+      /* CONTROLS & SEARCH */
+      .report-tools {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .search-box {
+        flex: 1;
+        min-width: 250px;
+        position: relative;
+      }
+
+      .search-box input {
+        width: 100%;
+        height: 48px;
+        padding: 0 45px 0 17px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 217, 255, 0.25);
+        background: rgba(2, 13, 24, 0.88);
+        color: white;
+        outline: none;
+        font-size: 14px;
+        transition: 0.25s;
+      }
+
+      .search-box input::placeholder {
+        color: #6f8794;
+      }
+
+      .search-box input:focus {
+        border-color: #00e5a0;
+        box-shadow: 0 0 20px rgba(0, 229, 160, 0.1);
+      }
+
+      .search-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #00e5a0;
+        font-size: 18px;
+        pointer-events: none;
+      }
+
+      .filter-btn,
+      .clear-btn {
+        height: 48px;
+        min-width: 120px;
+        padding: 0 18px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 217, 255, 0.25);
+        background: rgba(2, 13, 24, 0.88);
+        color: #fff;
+        outline: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: 0.25s;
+      }
+
+      .filter-btn:hover,
+      .filter-btn.active {
+        border-color: #00e5a0;
+        background: rgba(0, 229, 160, 0.08);
+        color: #00e5a0;
+        box-shadow: 0 0 18px rgba(0, 229, 160, 0.08);
+      }
+
+      .clear-btn {
+        color: #a2b7c2;
+      }
+
+      .clear-btn:hover {
+        color: #00e5a0;
+        border-color: #00e5a0;
+        background: rgba(0, 229, 160, 0.08);
+        box-shadow: 0 0 18px rgba(0, 229, 160, 0.08);
+      }
+
+      /* FILTER PANEL */
+      .filter-panel {
+        display: none;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 16px;
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        background: rgba(2, 13, 24, 0.94);
+        backdrop-filter: blur(14px);
+        box-shadow: 0 15px 45px rgba(0, 0, 0, 0.28);
+        animation: filterIn 0.25s ease;
+      }
+
+      .filter-panel.active {
+        display: block;
+      }
+
+      @keyframes filterIn {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .filter-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      .filter-item {
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid rgba(0, 217, 255, 0.12);
+        border-radius: 12px;
+        padding: 15px;
+      }
+
+      .filter-item.full {
+        grid-column: 1 / -1;
+      }
+
+      .filter-label {
+        display: block;
+        color: #00e5a0;
+        font-size: 11px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      .class-select {
+        width: 100%;
+        height: 42px;
+        padding: 0 12px;
+        border-radius: 9px;
+        border: 1px solid rgba(0, 217, 255, 0.25);
+        background: #020d18;
+        color: #fff;
+        outline: none;
+        cursor: pointer;
+      }
+
+      .class-select:focus {
+        border-color: #00e5a0;
+      }
+
+      .class-select option {
+        background: #020d18;
+        color: #fff;
+      }
+
+      .date-row,
+      .time-row,
+      .confidence-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .filter-input {
+        width: 100%;
+        height: 42px;
+        padding: 0 10px;
+        border-radius: 9px;
+        border: 1px solid rgba(0, 217, 255, 0.25);
+        background: #020d18;
+        color: #fff;
+        color-scheme: dark;
+        outline: none;
+      }
+
+      .filter-input:focus {
+        border-color: #00e5a0;
+      }
+
+      .filter-input::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+      }
+
+      .saved-report-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #b7cbd4;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .saved-report-row input {
+        width: 17px;
+        height: 17px;
+        accent-color: #00e5a0;
+        cursor: pointer;
+      }
+
+      .filter-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .apply-filter-btn,
+      .reset-filter-btn {
+        height: 42px;
+        padding: 0 18px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: 0.25s;
+      }
+
+      .apply-filter-btn {
+        background: #19d37b;
+        color: #00140b;
+        border: 1px solid #19d37b;
+      }
+
+      .apply-filter-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+
+      .reset-filter-btn {
+        background: rgba(255, 255, 255, 0.05);
+        color: #a2b7c2;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+
+      .reset-filter-btn:hover {
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .report-count {
+        display: inline-block;
+        color: #00e5a0;
+        background: rgba(0, 229, 160, 0.08);
+        border: 1px solid rgba(0, 229, 160, 0.22);
+        padding: 9px 15px;
+        border-radius: 25px;
+        margin-bottom: 25px;
+        font-size: 13px;
+        font-weight: bold;
+      }
+
+      /* PICKERS & CALENDARS */
+      .picker-field {
+        position: relative;
+        width: 100%;
+        min-width: 0;
+      }
+
+      .picker-field .filter-input {
+        width: 100%;
+        padding-right: 38px;
+      }
+
+      .picker-icon {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 24px;
+        height: 24px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: #00e5a0;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .picker-icon:hover,
+      .picker-icon.active {
+        background: rgba(0, 229, 160, 0.08);
+      }
+
+      .picker-icon svg {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: #00e5a0;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .custom-calendar,
+      .custom-time-picker {
+        display: none;
+        width: 320px;
+        padding: 15 px;
+        position: absolute;
+        z-index: 30000;
+        border: 1px solid rgba(0, 217, 255, 0.24);
+        border-radius: 16px;
+        background: rgba(2, 13, 24, 0.96);
+        backdrop-filter: blur(18px);
+        box-shadow: 0 20px 55px rgba(0, 0, 0, 0.58);
+        color: #fff;
+      }
+
+      .custom-calendar.active,
+      .custom-time-picker.active {
+        display: block;
+      }
+
+      .custom-calendar {
+        width: 320px;
+        padding: 15px;
+      }
+
+      .calendar-header {
+        display: grid;
+        grid-template-columns: 36px 1fr 36px;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .calendar-nav {
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(0, 217, 255, 0.22);
+        border-radius: 9px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        cursor: pointer;
+        font-size: 22px;
+      }
+
+      .calendar-nav:hover {
+        border-color: rgba(0, 229, 160, 0.5);
+        color: #00e5a0;
+      }
+
+      .calendar-title-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+
+      .calendar-title-button {
+        min-width: 104px;
+        height: 36px;
+        padding: 0 11px;
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        border-radius: 9px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .calendar-title-button:hover,
+      .calendar-title-button.active {
+        background: rgba(0, 229, 160, 0.11);
+        border-color: rgba(0, 229, 160, 0.52);
+        color: #00e5a0;
+      }
+
+      .calendar-picker {
+        display: none;
+        margin-bottom: 12px;
+        padding: 11px;
+        border: 1px solid rgba(0, 217, 255, 0.16);
+        border-radius: 12px;
+        background: rgba(1, 8, 16, 0.88);
+      }
+
+      .calendar-picker.active {
+        display: block;
+      }
+
+      .calendar-picker-heading {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 9px;
+      }
+
+      .calendar-picker-heading span {
+        color: #00e5a0;
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .calendar-picker-close {
+        border: 0;
+        background: transparent;
+        color: #78909c;
+        cursor: pointer;
+      }
+
+      .calendar-month-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+      }
+
+      .calendar-year-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        max-height: 150px;
+        overflow-y: auto;
+      }
+
+      .calendar-month-grid button,
+      .calendar-year-grid button {
+        min-height: 34px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.045);
+        color: #d8e7ed;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .calendar-month-grid button:hover,
+      .calendar-year-grid button:hover,
+      .calendar-month-grid button.selected,
+      .calendar-year-grid button.selected {
+        background: rgba(0, 229, 160, 0.13);
+        border-color: rgba(0, 229, 160, 0.48);
+        color: #00e5a0;
+      }
+
+      .calendar-weekdays,
+      .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        text-align: center;
+      }
+
+      .calendar-weekdays {
+        margin-bottom: 4px;
+      }
+
+      .calendar-weekdays span {
+        padding: 5px 0;
+        color: #7e98a5;
+        font-size: 10px;
+        font-weight: 800;
+      }
+
+      .calendar-days button {
+        height: 34px;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: #e4eef2;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .calendar-days button:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .calendar-days button.other-month {
+        color: #415965;
+      }
+
+      .calendar-days button.selected {
+        background: #00e5a0;
+        color: #00140b;
+        box-shadow: 0 0 14px rgba(0, 229, 160, 0.2);
+      }
+
+      .calendar-days button.today {
+        border-color: #00e5a0;
+      }
+
+      .calendar-actions,
+      .time-picker-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .calendar-actions button,
+      .time-picker-actions button {
+        height: 34px;
+        border: 1px solid rgba(0, 217, 255, 0.2);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .calendar-actions button:hover,
+      .time-picker-actions button:hover {
+        border-color: rgba(0, 229, 160, 0.5);
+        color: #00e5a0;
+      }
+
+      .custom-time-picker {
+        width: 330px;
+        padding: 15px;
+      }
+
+      .time-picker-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .time-picker-header span {
+        color: #00e5a0;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .time-picker-current {
+        color: #8da6b1;
+        font-size: 11px;
+      }
+
+      .time-select-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .time-select-group {
+        padding: 9px;
+        border: 1px solid rgba(0, 217, 255, 0.13);
+        border-radius: 11px;
+        background: rgba(255, 255, 255, 0.025);
+      }
+
+      .time-select-label {
+        margin-bottom: 7px;
+        color: #7e98a5;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .time-hour-grid,
+      .time-minute-grid {
+        display: grid;
+        gap: 5px;
+        max-height: 140px;
+        overflow-y: auto;
+      }
+
+      .time-hour-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .time-minute-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .time-option {
+        height: 30px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: rgba(255, 255, 255, 0.045);
+        color: #d8e7ed;
+        cursor: pointer;
+        font-size: 10px;
+        font-weight: 700;
+      }
+
+      .time-option:hover,
+      .time-option.selected {
+        background: rgba(0, 229, 160, 0.13);
+        border-color: rgba(0, 229, 160, 0.48);
+        color: #00e5a0;
+      }
+
+      .map-view-btn {
+        height: 32px;
+        padding: 0 12px;
+        border: 1px solid rgba(0, 217, 255, 0.25);
+        border-radius: 8px;
+        background: rgba(0, 217, 255, 0.055);
+        color: #00d9ff;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 700;
+        transition: 0.25s ease;
+        white-space: nowrap;
+      }
+
+      .map-view-btn:hover {
+        border-color: #00e5a0;
+        color: #00e5a0;
+        background: rgba(0, 229, 160, 0.08);
+      }
+
+      /* REPORT CARD */
+      .report-card {
+        position: relative;
+        z-index: 1;
+        background: linear-gradient(
+          145deg,
+          rgba(8, 30, 43, 0.94),
+          rgba(3, 15, 25, 0.94)
+        );
+        border: 1px solid rgba(0, 217, 255, 0.18);
+        border-radius: 18px;
+        padding: 28px;
+        margin-bottom: 22px;
+        backdrop-filter: blur(12px);
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.28);
+        transition: 0.3s;
+        animation: cardIn 0.7s ease forwards;
+      }
+
+      .report-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(0, 229, 160, 0.45);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      }
+
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .report-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+        gap: 15px;
+      }
+
+      .report-title-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .report-header h2 {
+        color: #00d9ff;
+        font-size: 22px;
+        letter-spacing: 0.5px;
+        word-break: break-word;
+      }
+
+      .edit-name-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        border: 1px solid rgba(0, 217, 255, 0.25);
+        background: rgba(0, 217, 255, 0.06);
+        color: #00e5a0;
+        cursor: pointer;
+        font-size: 15px;
+        transition: 0.25s;
+        flex-shrink: 0;
+      }
+
+      .edit-name-btn:hover {
+        border-color: #00e5a0;
+        background: rgba(0, 229, 160, 0.1);
+        transform: scale(1.05);
+      }
+
+      .name-edit-box {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        max-width: 600px;
+      }
+
+      .name-edit-box.active {
+        display: flex;
+      }
+
+      .name-edit-input {
+        flex: 1;
+        min-width: 0;
+        height: 40px;
+        padding: 0 12px;
+        border-radius: 9px;
+        border: 1px solid rgba(0, 229, 160, 0.4);
+        background: rgba(2, 13, 24, 0.9);
+        color: white;
+        outline: none;
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .name-edit-input:focus {
+        border-color: #00e5a0;
+        box-shadow: 0 0 15px rgba(0, 229, 160, 0.1);
+      }
+
+      .name-save-btn,
+      .name-cancel-btn {
+        height: 40px;
+        padding: 0 13px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        border: 1px solid transparent;
+        transition: 0.25s;
+      }
+
+      .name-save-btn {
+        background: #19d37b;
+        color: #00140b;
+      }
+
+      .name-save-btn:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+      }
+
+      .name-cancel-btn {
+        background: rgba(255, 255, 255, 0.05);
+        color: #a2b7c2;
+        border-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .name-cancel-btn:hover {
+        color: white;
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      .report-status-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+      }
+
+      .status {
+        padding: 7px 14px;
+        border-radius: 20px;
+        background: rgba(25, 211, 123, 0.12);
+        border: 1px solid rgba(25, 211, 123, 0.22);
+        color: #19d37b;
+        font-size: 12px;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+      .save-report-btn {
+        height: 34px;
+        padding: 0 12px;
+        border-radius: 18px;
+        border: 1px solid rgba(0, 229, 160, 0.25);
+        background: rgba(0, 229, 160, 0.1);
+        color: #a2b7c2;
+        cursor: pointer;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.25s;
+      }
+
+      .save-report-btn:hover {
+        color: #ffd45c;
+        border-color: #ffd45c;
+        background: rgba(255, 212, 92, 0.1);
+        box-shadow: 0 0 16px rgba(255, 212, 92, 0.1);
+      }
+
+      .save-report-btn.saved {
+        color: #ffd45c;
+        border-color: rgba(255, 212, 92, 0.45);
+        background: rgba(255, 212, 92, 0.12);
+        box-shadow: 0 0 16px rgba(255, 212, 92, 0.12);
+      }
+
+      .report-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+      }
+
+      .detail {
+        background: rgba(2, 13, 24, 0.82);
+        border: 1px solid #123344;
+        border-radius: 11px;
+        padding: 17px;
+        transition: 0.25s;
+      }
+
+      .detail:hover {
+        border-color: rgba(0, 217, 255, 0.35);
+      }
+
+      .detail small {
+        display: block;
+        color: #8199a7;
+        margin-bottom: 8px;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+      }
+
+      .detail strong {
+        color: white;
+        word-break: break-word;
+        font-size: 14px;
+      }
+
+      .summary-title {
+        color: #00e5a0;
+        margin: 28px 0 12px;
+        font-size: 17px;
+        letter-spacing: 0.5px;
+      }
+
+      .detection-summary {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 15px;
+      }
+
+      .summary-item {
+        background: rgba(2, 13, 24, 0.82);
+        border: 1px solid #123344;
+        border-radius: 11px;
+        padding: 15px;
+      }
+
+      .summary-item small {
+        display: block;
+        color: #8199a7;
+        margin-bottom: 7px;
+        font-size: 11px;
+      }
+
+      .summary-item strong {
+        color: #00e5a0;
+        font-size: 18px;
+      }
+
+      .detected-objects-toggle {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        border-radius: 11px;
+        border: 1px solid rgba(0, 217, 255, 0.18);
+        background: rgba(2, 13, 24, 0.82);
+        color: #fff;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: 0.25s;
+      }
+
+      .detected-objects-toggle:hover {
+        border-color: rgba(0, 229, 160, 0.4);
+        background: rgba(0, 229, 160, 0.035);
+      }
+
+      .detected-objects-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .detected-objects-arrow {
+        color: #00e5a0;
+        font-size: 17px;
+        transition: 0.25s;
+      }
+
+      .detected-objects-toggle.open .detected-objects-arrow {
+        transform: rotate(90deg);
+      }
+
+      .detected-objects-details {
+        display: none;
+        margin-top: 10px;
+        border: 1px solid rgba(0, 217, 255, 0.15);
+        border-radius: 12px;
+        overflow: hidden;
+        background: rgba(2, 13, 24, 0.65);
+      }
+
+      .detected-objects-details.open {
+        display: block;
+      }
+
+      .detected-object-row {
+        display: grid;
+        grid-template-columns: 1.4fr 0.8fr 1fr;
+        gap: 12px;
+        padding: 13px 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        align-items: center;
+      }
+
+      .detected-object-row:last-child {
+        border-bottom: none;
+      }
+
+      .detected-object-name {
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+      }
+
+      .confidence-value {
+        color: #19d37b;
+        font-weight: bold;
+      }
+
+      .box-mini {
+        color: #8199a7;
+        font-size: 12px;
+      }
+
+      .report-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 22px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(0, 217, 255, 0.1);
+      }
+
+      .report-action-btn {
+        height: 40px;
+        padding: 0 15px;
+        border-radius: 9px;
+        border: 1px solid rgba(0, 217, 255, 0.22);
+        background: rgba(0, 217, 255, 0.05);
+        color: #b7cbd4;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+        transition: 0.25s;
+      }
+
+      .report-action-btn:hover {
+        color: #00e5a0;
+        border-color: #00e5a0;
+        background: rgba(0, 229, 160, 0.07);
+      }
+
+      .report-card.export-open {
+        z-index: 10000 !important;
+      }
+
+      .export-dropdown {
+        position: relative;
+        display: inline-block;
+        z-index: 500;
+      }
+
+      .export-menu {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: calc(100% + 8px);
+        min-width: 180px;
+        padding: 7px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 217, 255, 0.25);
+        background: #020d18;
+        color-scheme: dark;
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+        z-index: 9999;
+      }
+
+      .export-menu.active {
+        display: block;
+      }
+
+      .export-option {
+        width: 100%;
+        height: 38px;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: #b7cbd4;
+        text-align: left;
+        padding: 0 12px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+
+      .export-option:hover {
+        background: rgba(0, 229, 160, 0.08);
+        color: #00e5a0;
+      }
+
+      /* MODAL UI */
+      .details-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        background: rgba(0, 0, 0, 0.82);
+        backdrop-filter: blur(9px);
+        padding: 30px;
+        overflow-y: auto;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .details-modal.active {
+        display: flex;
+      }
+
+      .details-modal-card {
+        position: relative;
+        width: min(1100px, 100%);
+        max-height: calc(100vh - 114px);
+        overflow: hidden;
+        padding: 30px;
+        border: 1px solid rgba(0, 217, 255, 0.22);
+        border-radius: 18px;
+        background: rgba(2, 13, 24, 0.96);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        box-shadow:
+          0 25px 70px rgba(0, 0, 0, 0.55),
+          0 0 35px rgba(0, 217, 255, 0.06);
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #detailsModalContent {
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .modal-scroll-content {
+        overflow-y: auto;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 5;
+      }
+
+      .modal-close:hover {
+        color: #00e5a0;
+        border-color: #00e5a0;
+      }
+
+      .modal-title {
+        color: #00d9ff;
+        font-size: 25px;
+        margin-bottom: 20px;
+        padding-right: 50px;
+      }
+
+      .image-comparison {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 25px;
+      }
+
+      .comparison-card {
+        background: rgba(2, 13, 24, 0.82);
+        border: 1px solid #123344;
+        border-radius: 13px;
+        padding: 14px;
+        overflow: hidden;
+      }
+
+      .comparison-card h4 {
+        color: #00e5a0;
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+
+      .comparison-media {
+        width: 100%;
+        min-height: 250px;
+        border-radius: 10px;
+        background: #01070d;
+        border: 1px solid rgba(0, 217, 255, 0.12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .comparison-media img,
+      .comparison-media canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        max-height: 480px;
+        object-fit: contain;
+      }
+
+      .comparison-placeholder {
+        color: #8199a7;
+        font-size: 13px;
+        text-align: center;
+        padding: 30px;
+      }
+
+      .modal-section {
+        margin-top: 22px;
+      }
+
+      .modal-section h3 {
+        color: #00e5a0;
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+
+      .modal-info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+
+      .modal-info {
+        background: rgba(2, 13, 24, 0.82);
+        border: 1px solid #123344;
+        border-radius: 10px;
+        padding: 14px;
+      }
+
+      .modal-info small {
+        display: block;
+        color: #8199a7;
+        font-size: 11px;
+        margin-bottom: 6px;
+      }
+
+      .modal-info strong {
+        color: white;
+        font-size: 13px;
+        word-break: break-word;
+      }
+
+      .modal-detection {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .modal-box {
+        background: rgba(2, 13, 24, 0.82);
+        border: 1px solid #123344;
+        border-radius: 10px;
+        padding: 14px;
+      }
+
+      .modal-box small {
+        display: block;
+        color: #8199a7;
+        font-size: 11px;
+        margin-bottom: 7px;
+      }
+
+      .modal-box strong {
+        color: #19d37b;
+        font-size: 13px;
+        word-break: break-word;
+      }
+
+      .no-results,
+      .empty {
+        text-align: center;
+        background: linear-gradient(
+          145deg,
+          rgba(8, 30, 43, 0.9),
+          rgba(3, 15, 25, 0.9)
+        );
+        border-radius: 18px;
+        margin-bottom: 22px;
+      }
+
+      .no-results {
+        padding: 65px 25px;
+        border: 1px dashed rgba(0, 217, 255, 0.3);
+      }
+
+      .no-results-icon {
+        font-size: 45px;
+        margin-bottom: 15px;
+      }
+
+      .empty {
+        padding: 80px 25px;
+        border: 1px dashed rgba(0, 217, 255, 0.35);
+        backdrop-filter: blur(12px);
+      }
+
+      .empty-icon {
+        font-size: 52px;
+        margin-bottom: 18px;
+        filter: drop-shadow(0 0 12px rgba(0, 217, 255, 0.3));
+      }
+
+      footer {
+        position: relative;
+        z-index: 5;
+        padding: 30px 7%;
+        text-align: center;
+        color: #526d7a;
+        border-top: 1px solid #123344;
+        background: #020913;
+        font-size: 12px;
+      }
+
+      .logo-popup {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.88);
+        backdrop-filter: blur(8px);
+        z-index: 10000;
+        justify-content: center;
+        align-items: center;
+        padding: 30px;
+      }
+
+      .logo-popup img {
+        width: min(520px, 90vw);
+        max-height: 85vh;
+        object-fit: contain;
+        border-radius: 50%;
+        box-shadow:
+          0 0 30px rgba(0, 217, 255, 0.35),
+          0 0 70px rgba(0, 229, 160, 0.18);
+        animation: logoPopupIn 0.35s ease;
+      }
+
+      .close-logo {
+        position: absolute;
+        top: 25px;
+        right: 35px;
+        font-size: 42px;
+        color: white;
+        cursor: pointer;
+        line-height: 1;
+        z-index: 10001;
+      }
+
+      .close-logo:hover {
+        color: #00e5a0;
+      }
+
+      @keyframes logoPopupIn {
+        from {
+          opacity: 0;
+          transform: scale(0.75);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .report-grid,
+        .modal-info-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .filter-grid,
+        .image-comparison {
+          grid-template-columns: 1fr;
+        }
+        .filter-item.full {
+          grid-column: auto;
+        }
+        .detection-summary {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      @media (max-width: 700px) {
+        nav {
+          padding: 0 5%;
+        }
+        .brand img {
+          width: 34px;
+          height: 34px;
+        }
+        .brand-text {
+          font-size: 15px;
+          letter-spacing: 2px;
+        }
+        .home-link {
+          display: none;
+        }
+        .page {
+          padding: 110px 6% 70px;
+          background-position: center;
+          background-attachment: scroll;
+        }
+        .heading h1 {
+          font-size: 40px;
+        }
+        .report-grid,
+        .detection-summary,
+        .modal-info-grid,
+        .modal-detection,
+        .date-row,
+        .time-row,
+        .confidence-row {
+          grid-template-columns: 1fr;
+        }
+        .report-card {
+          padding: 20px;
+        }
+        .report-header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .report-status-group {
+          width: 100%;
+          justify-content: flex-start;
+        }
+        .report-tools {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .search-box {
+          width: 100%;
+          min-width: 0;
+        }
+        .filter-btn,
+        .clear-btn {
+          width: 100%;
+          height: 48px;
+          padding: 0 18px;
+          border-radius: 12px;
+        }
+        .name-edit-box {
+          max-width: 100%;
+          flex-wrap: wrap;
+        }
+        .name-edit-input {
+          width: 100%;
+          flex-basis: 100%;
+        }
+        .detected-object-row {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+        .details-modal {
+          padding: 15px;
+        }
+        .details-modal-card {
+          padding: 20px;
+        }
+        .close-logo {
+          top: 20px;
+          right: 25px;
+          font-size: 38px;
+        }
+        .export-menu {
+          position: fixed;
+          left: 20px;
+          right: 20px;
+          bottom: 20px;
+          top: auto;
+          width: auto;
+        }
+        .custom-calendar,
+        .custom-time-picker {
+          width: min(320px, calc(100vw - 24px));
+        }
+      }
+
+      .location-detail {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .location-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 13px;
+        margin-top: 7px;
+      }
+
+      .location-row span {
+        color: #b7cbd4;
+        font-size: 11px;
+      }
+
+      .location-row strong {
+        color: #00e5a0;
+        font-size: 11px;
+        text-align: right;
+      }
+      .target-measurement-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .target-measurement-card {
+        padding: 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .target-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .target-card-header span {
+        font-weight: 600;
+        font-size: 12px;
+      }
+
+      .target-card-header strong {
+        text-transform: capitalize;
+        font-size: 12px;
+      }
+
+      .target-card-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .target-wide {
+        grid-column: 1 / -1;
+      }
+
+      @media (max-width: 900px) {
+        .target-measurement-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .target-card-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .target-wide {
+          grid-column: auto;
+        }
+      }
+
+      .target-measurement-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .target-measurement-card {
+        padding: 16px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.035);
+      }
+
+      .target-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .target-card-header span {
+        font-weight: 600;
+      }
+
+      .target-card-header strong {
+        text-transform: capitalize;
+      }
+
+      .target-card-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .target-wide {
+        grid-column: 1 / -1;
+      }
+
+      @media (max-width: 900px) {
+        .target-measurement-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .target-card-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .target-wide {
+          grid-column: auto;
+        }
+      }
+
+      .target-measurement-grid + .summary-item {
+        padding: 8px 12px !important;
+        margin-top: 8px !important;
+        margin-bottom: 10px !important;
+        font-size: 14px;
+      }
+
+      .target-measurement-grid + .summary-item small {
+        font-size: 13px;
+      }
+
+      .target-measurement-grid + .summary-item strong {
+        font-size: 14px;
+        line-height: 1.4;
+        font-weight: 500;
+      }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  </head>
+
+  <body>
+    <!-- NAVIGATION BAR -->
+    <nav>
+      <div class="brand" onclick="openLogoPopup()">
+        <img src="Logo.png" alt="AQUASCAN AI Logo" />
+        <div class="brand-text">AQUASCAN <span>AI</span></div>
+      </div>
+
+      <div class="nav-right">
+        <a href="index.html" class="home-link">Home</a>
+        <button
+          class="menu-btn"
+          onclick="toggleMenu()"
+          aria-label="Toggle Navigation Menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- SIDE PANEL MENU -->
+    <div class="menu-panel" id="menuPanel">
+      <div class="menu-title">AQUASCAN AI</div>
+      <a href="dashboard.html">📡 Dashboard</a>
+      <a href="reports.html">📊 Detection Reports</a>
+      <a href="features.html">🌊 Features</a>
+      <a href="features.html#how">⚙ How It Works</a>
+      <a href="index.html#mission">🎯 Mission</a>
+      <a href="index.html#project-core">🧠 Project Core</a>
+      <a href="index.html#development">🚀 Development Focus</a>
+      <a href="index.html#future">🔭 Future Scope</a>
+      <a href="developer.html">👨‍💻 Developer</a>
+    </div>
+
+    <!-- MAIN PAGE CONTENT -->
+    <section class="page">
+      <div class="page-content">
+        <div class="heading">
+          <div class="label">ANALYSIS HISTORY</div>
+          <h1>Detection <span>Reports</span></h1>
+          <p>
+            Review and manage previous underwater Side-Scan Sonar analysis
+            results generated by AQUASCAN AI.
+          </p>
+        </div>
+
+        <div class="report-tools">
+          <div class="search-box">
+            <input
+              type="text"
+              id="reportSearch"
+              placeholder="Search report name, image, class, confidence, date, time or location..."
+            />
+            <span class="search-icon">🔍</span>
+          </div>
+
+          <button class="filter-btn" id="filterButton">⚙ Filter</button>
+          <button class="clear-btn" id="clearSearch">Clear</button>
+        </div>
+
+        <!-- FILTER OVERLAY PANEL -->
+        <div class="filter-panel" id="filterPanel">
+          <div class="filter-grid">
+            <div class="filter-item">
+              <label class="filter-label" for="classSelect">Classes</label>
+              <select id="classSelect" class="class-select">
+                <option value="all">All Classes</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <span class="filter-label">Date</span>
+              <div class="date-row">
+                <div class="picker-field">
+                  <input
+                    type="text"
+                    id="dateFrom"
+                    class="filter-input"
+                    placeholder="Select date"
+                    autocomplete="off"
+                    inputmode="numeric"
+                  />
+                  <button
+                    type="button"
+                    class="picker-icon"
+                    data-picker="dateFrom"
+                    aria-label="Open calendar"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                      <path d="M7 3v4M17 3v4M3 10h18"></path>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="picker-field">
+                  <input
+                    type="text"
+                    id="dateTo"
+                    class="filter-input"
+                    placeholder="Select date"
+                    autocomplete="off"
+                    inputmode="numeric"
+                  />
+                  <button
+                    type="button"
+                    class="picker-icon"
+                    data-picker="dateTo"
+                    aria-label="Open calendar"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                      <path d="M7 3v4M17 3v4M3 10h18"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="filter-item">
+              <span class="filter-label">Time Range</span>
+              <div class="time-row">
+                <div class="picker-field">
+                  <input
+                    type="text"
+                    id="timeFrom"
+                    class="filter-input"
+                    placeholder="Select time"
+                    autocomplete="off"
+                    inputmode="numeric"
+                  />
+                  <button
+                    type="button"
+                    class="picker-icon"
+                    data-picker="timeFrom"
+                    aria-label="Open time picker"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="8.5"></circle>
+                      <path d="M12 7v5l3.5 2"></path>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="picker-field">
+                  <input
+                    type="text"
+                    id="timeTo"
+                    class="filter-input"
+                    placeholder="Select time"
+                    autocomplete="off"
+                    inputmode="numeric"
+                  />
+                  <button
+                    type="button"
+                    class="picker-icon"
+                    data-picker="timeTo"
+                    aria-label="Open time picker"
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <circle cx="12" cy="12" r="8.5"></circle>
+                      <path d="M12 7v5l3.5 2"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="filter-item">
+              <span class="filter-label">Confidence Score</span>
+              <div class="confidence-row">
+                <input
+                  type="number"
+                  id="confidenceFrom"
+                  class="filter-input"
+                  min="0"
+                  max="100"
+                  value="0"
+                  placeholder="Min %"
+                />
+                <input
+                  type="number"
+                  id="confidenceTo"
+                  class="filter-input"
+                  min="0"
+                  max="100"
+                  value="100"
+                  placeholder="Max %"
+                />
+              </div>
+            </div>
+
+            <div class="filter-item full">
+              <label class="saved-report-row">
+                <input type="checkbox" id="savedReportsOnly" />
+                <span>⭐ Saved Reports Only</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-actions">
+            <button class="reset-filter-btn" id="resetFilter">Reset</button>
+            <button class="apply-filter-btn" id="applyFilter">
+              Apply Filter
+            </button>
+          </div>
+        </div>
+
+        <div id="reportCount" class="report-count"></div>
+        <div id="reportContainer"></div>
+      </div>
+    </section>
+
+    <footer>AQUASCAN AI • THRYVEX • Underwater Intelligence Platform</footer>
+
+    <!-- LOGO POPUP MODAL -->
+    <div id="logoPopup" class="logo-popup" onclick="closeLogoPopup(event)">
+      <span class="close-logo" onclick="closeLogoPopup()">&times;</span>
+      <img src="Logo.png" alt="THRYVEX Team Logo" />
+    </div>
+
+    <!-- CUSTOM CALENDAR WIDGET -->
+    <div id="customCalendar" class="custom-calendar">
+      <div class="calendar-header">
+        <button type="button" id="prevMonth" class="calendar-nav">‹</button>
+        <div class="calendar-title-controls">
+          <button
+            type="button"
+            id="calendarMonthButton"
+            class="calendar-title-button"
+          >
+            Month
+          </button>
+          <button
+            type="button"
+            id="calendarYearButton"
+            class="calendar-title-button"
+          >
+            Year
+          </button>
+        </div>
+        <button type="button" id="nextMonth" class="calendar-nav">›</button>
+      </div>
+
+      <div id="calendarPicker" class="calendar-picker">
+        <div class="calendar-picker-heading">
+          <span id="calendarPickerTitle">Select month</span>
+          <button
+            type="button"
+            class="calendar-picker-close"
+            onclick="
+              document
+                .getElementById('calendarPicker')
+                .classList.remove('active')
+            "
+          >
+            ✕
+          </button>
+        </div>
+        <div class="calendar-month-grid" id="calendarMonths"></div>
+        <div style="height: 8px"></div>
+        <div class="calendar-year-grid" id="calendarYears"></div>
+      </div>
+
+      <div class="calendar-weekdays">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span>
+        <span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+
+      <div id="calendarDays" class="calendar-days"></div>
+
+      <div class="calendar-actions">
+        <button type="button" id="todayBtn">Today</button>
+        <button type="button" id="clearDateBtn">Clear</button>
+      </div>
+    </div>
+
+    <!-- CUSTOM TIME PICKER WIDGET -->
+    <div id="customTimePicker" class="custom-time-picker">
+      <div class="time-picker-header">
+        <span>Select Time</span>
+        <span id="timePickerCurrent" class="time-picker-current"
+          >Select hour + minute</span
+        >
+      </div>
+
+      <div class="time-select-columns">
+        <div class="time-select-group">
+          <div class="time-select-label">Hour</div>
+          <div id="timeHourGrid" class="time-hour-grid"></div>
+        </div>
+
+        <div class="time-select-group">
+          <div class="time-select-label">Minutes</div>
+          <div id="timeMinuteGrid" class="time-minute-grid"></div>
+        </div>
+      </div>
+
+      <div class="time-picker-actions">
+        <button type="button" id="clearTimeBtn">Clear</button>
+        <button type="button" id="applyTimeBtn">Apply</button>
+      </div>
+    </div>
+
+    <!-- FULL REPORT DETAILS MODAL -->
+    <div
+      id="detailsModal"
+      class="details-modal"
+      onclick="closeDetailsModal(event)"
+    >
+      <div class="details-modal-card" id="detailsModalCard">
+        <button class="modal-close" onclick="closeDetailsModal()">
+          &times;
+        </button>
+        <div id="detailsModalContent"></div>
+      </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT APP LOGIC -->
+    <script>
+      function toggleMenu() {
+        const menu = document.getElementById("menuPanel");
+        menu.classList.toggle("active");
+      }
+
+      document.addEventListener("click", function (event) {
+        const menu = document.getElementById("menuPanel");
+        const button = document.querySelector(".menu-btn");
+        if (!menu.contains(event.target) && !button.contains(event.target)) {
+          menu.classList.remove("active");
+        }
+      });
+
+      function openLogoPopup() {
+        document.getElementById("logoPopup").style.display = "flex";
+      }
+
+      function closeLogoPopup(event) {
+        if (event && event.target !== document.getElementById("logoPopup")) {
+          return;
+        }
+        document.getElementById("logoPopup").style.display = "none";
+      }
+
+      const reportData = localStorage.getItem("aquascanReports");
+      const container = document.getElementById("reportContainer");
+      const reportCount = document.getElementById("reportCount");
+      const searchInput = document.getElementById("reportSearch");
+      const filterButton = document.getElementById("filterButton");
+      const filterPanel = document.getElementById("filterPanel");
+      const classSelect = document.getElementById("classSelect");
+      const clearButton = document.getElementById("clearSearch");
+      const resetFilterButton = document.getElementById("resetFilter");
+      const applyFilterButton = document.getElementById("applyFilter");
+      const dateFrom = document.getElementById("dateFrom");
+      const dateTo = document.getElementById("dateTo");
+      const timeFrom = document.getElementById("timeFrom");
+      const timeTo = document.getElementById("timeTo");
+      const confidenceFrom = document.getElementById("confidenceFrom");
+      const confidenceTo = document.getElementById("confidenceTo");
+      const savedReportsOnly = document.getElementById("savedReportsOnly");
+
+      let reports = [];
+
+      if (reportData) {
+        try {
+          reports = JSON.parse(reportData);
+        } catch (error) {
+          console.error("Report data error:", error);
+          reports = [];
+        }
+      }
+
+      filterButton.addEventListener("click", function () {
+        filterPanel.classList.toggle("active");
+        filterButton.classList.toggle("active");
+      });
+
+      function createClassFilter() {
+        const classes = new Set();
+        reports.forEach(function (report) {
+          if (report.detections && Array.isArray(report.detections)) {
+            report.detections.forEach(function (item) {
+              if (item.class) {
+                classes.add(String(item.class));
+              }
+            });
+          }
+        });
+
+        Array.from(classes)
+          .sort()
+          .forEach(function (className) {
+            const option = document.createElement("option");
+            option.value = className.toLowerCase();
+            option.textContent = className;
+            classSelect.appendChild(option);
+          });
+      }
+
+      function safeText(value) {
+        if (value === undefined || value === null) {
+          return "Not available";
+        }
+        return String(value);
+      }
+
+      function escapeHTML(value) {
+        return safeText(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function getConfidencePercent(item) {
+        const value = Number(item.confidence);
+        if (isNaN(value)) {
+          return null;
+        }
+        return Math.round(value * 100);
+      }
+
+      function getBox(item) {
+        if (!item || !Array.isArray(item.box) || item.box.length < 4) {
+          return null;
+        }
+        const x1 = Number(item.box[0]);
+        const y1 = Number(item.box[1]);
+        const x2 = Number(item.box[2]);
+        const y2 = Number(item.box[3]);
+
+        if ([x1, y1, x2, y2].some((value) => isNaN(value))) {
+          return null;
+        }
+
+        return {
+          x1: x1,
+          y1: y1,
+          x2: x2,
+          y2: y2,
+          width: Math.abs(x2 - x1),
+          height: Math.abs(y2 - y1),
+        };
+      }
+
+      function getTargetMeasurementHTML(report, mode) {
+        const detections =
+          report && Array.isArray(report.detections) ? report.detections : [];
+
+        if (mode === "modal") {
+          return `
+      <div class="modal-section">
+        <h3>📐 Target Measurement</h3>
+
+        <div class="target-measurement-grid">
+          ${
+            detections.length
+              ? detections
+                  .map(function (item, i) {
+                    const box = getBox(item);
+
+                    if (!box) {
+                      return `
+                      <div class="target-measurement-card">
+                        <div class="target-card-header">
+                          <span>Target #${i + 1}</span>
+                          <strong>${escapeHTML(item.class || "Unknown")}</strong>
+                        </div>
+                        <div class="modal-box">
+                          <small>Measurement</small>
+                          <strong>Not available</strong>
+                        </div>
+                      </div>`;
+                    }
+
+                    const cx = Math.round((box.x1 + box.x2) / 2);
+                    const cy = Math.round((box.y1 + box.y2) / 2);
+
+                    return `
+                    <div class="target-measurement-card">
+
+                      <div class="target-card-header">
+                        <span>🎯 Target #${i + 1}</span>
+                        <strong>${escapeHTML(item.class || "Unknown")}</strong>
+                      </div>
+
+                      <div class="target-card-grid">
+
+                        <div class="modal-box">
+                          <small>Width</small>
+                          <strong>${Math.round(box.width)} px</strong>
+                        </div>
+
+                        <div class="modal-box">
+                          <small>Height</small>
+                          <strong>${Math.round(box.height)} px</strong>
+                        </div>
+
+                        <div class="modal-box">
+                          <small>Estimated Target Size</small>
+                          <strong>${Math.round(box.width)} × ${Math.round(box.height)} px</strong>
+                        </div>
+
+                        <div class="modal-box">
+                          <small>Measurement Unit</small>
+                          <strong>px</strong>
+                        </div>
+
+                        <div class="modal-box target-wide">
+                          <small>Bounding Box</small>
+                          <strong>
+                            [${Math.round(box.x1)}, ${Math.round(box.y1)},
+                            ${Math.round(box.x2)}, ${Math.round(box.y2)}]
+                          </strong>
+                        </div>
+
+                        <div class="modal-box target-wide">
+                          <small>Center Position</small>
+                          <strong>(${cx}, ${cy}) px</strong>
+                        </div>
+
+                      </div>
+
+                    </div>`;
+                  })
+                  .join("")
+              : `
+                <div class="modal-box">
+                  <small>Measurement</small>
+                  <strong>Not available</strong>
+                </div>`
+          }
+        </div>
+
+        <div class="modal-box" style="margin-top:12px;">
+          <small>📏 Measurement Unit</small>
+          <strong>px</strong>
+        </div>
+
+        <div class="modal-box" style="margin-top:12px;">
+          <small>ℹ️ Note</small>
+          <strong>
+            Measurement is based on the AI bounding box in image pixels.
+            Physical sonar scale/range information is not available in the current report.
+          </strong>
+        </div>
+
+      </div>`;
+        }
+
+        return `
+    <h3 class="summary-title">📐 Target Measurement</h3>
+
+    <div class="target-measurement-grid">
+      ${
+        detections.length
+          ? detections
+              .map(function (item, i) {
+                const box = getBox(item);
+
+                if (!box) {
+                  return `
+                  <div class="target-measurement-card">
+                    <div class="target-card-header">
+                      <span>🎯 Target #${i + 1}</span>
+                      <strong>${escapeHTML(item.class || "Unknown")}</strong>
+                    </div>
+
+                    <div class="target-card-grid">
+                      <div class="summary-item target-wide">
+                        <small>Measurement</small>
+                        <strong>Not available</strong>
+                      </div>
+                    </div>
+                  </div>`;
+                }
+
+                const cx = Math.round((box.x1 + box.x2) / 2);
+                const cy = Math.round((box.y1 + box.y2) / 2);
+
+                return `
+                <div class="target-measurement-card">
+
+                  <div class="target-card-header">
+                    <span>🎯 Target #${i + 1}</span>
+                    <strong>${escapeHTML(item.class || "Unknown")}</strong>
+                  </div>
+
+                  <div class="target-card-grid">
+
+                    <div class="summary-item">
+                      <small>Width</small>
+                      <strong>${Math.round(box.width)} px</strong>
+                    </div>
+
+                    <div class="summary-item">
+                      <small>Height</small>
+                      <strong>${Math.round(box.height)} px</strong>
+                    </div>
+
+                    <div class="summary-item">
+                      <small>Estimated Target Size</small>
+                      <strong>${Math.round(box.width)} × ${Math.round(box.height)} px</strong>
+                    </div>
+
+                    <div class="summary-item">
+                      <small>Measurement Unit</small>
+                      <strong>px</strong>
+                    </div>
+
+                    <div class="summary-item target-wide">
+                      <small>Bounding Box</small>
+                      <strong>
+                        [${Math.round(box.x1)}, ${Math.round(box.y1)},
+                        ${Math.round(box.x2)}, ${Math.round(box.y2)}]
+                      </strong>
+                    </div>
+
+                    <div class="summary-item target-wide">
+                      <small>Center Position</small>
+                      <strong>(${cx}, ${cy}) px</strong>
+                    </div>
+
+                  </div>
+
+                </div>`;
+              })
+              .join("")
+          : `
+            <div class="target-measurement-card">
+              <div class="summary-item">
+                <small>Measurement</small>
+                <strong>Not available</strong>
+              </div>
+            </div>`
+      }
+    </div>
+
+    <div class="summary-item" style="margin-top:12px; margin-bottom:15px;">
+      <small>ℹ️ Note</small>
+      <strong>
+        Measurement is based on the AI bounding box in image pixels.
+        Physical sonar scale/range information is not available in the current report.
+      </strong>
+    </div>`;
+      }
+
+      function getReportSearchText(report) {
+        let text = "";
+        text += " " + safeText(report.analysisName);
+        text += " " + safeText(report.image);
+        text += " " + safeText(report.time);
+        text += " " + safeText(report.date);
+        text += " " + safeText(report.location);
+        text += " " + safeText(report.latitude);
+        text += " " + safeText(report.longitude);
+
+        if (report.detections && Array.isArray(report.detections)) {
+          report.detections.forEach(function (item) {
+            text += " " + safeText(item.class);
+            const confidence = getConfidencePercent(item);
+            if (confidence !== null) {
+              text += " " + confidence;
+              text += " " + confidence + "%";
+            }
+          });
+        }
+        return text.toLowerCase();
+      }
+
+      function matchesSearch(report) {
+        const query = searchInput.value.trim().toLowerCase();
+        if (!query) {
+          return true;
+        }
+        return getReportSearchText(report).includes(query);
+      }
+
+      function matchesClassFilter(report) {
+        const selectedClass = classSelect.value.toLowerCase();
+        if (selectedClass === "all") {
+          return true;
+        }
+        if (!report.detections || !Array.isArray(report.detections)) {
+          return false;
+        }
+        return report.detections.some(function (item) {
+          return safeText(item.class).toLowerCase() === selectedClass;
+        });
+      }
+
+      function getReportDate(report) {
+        const rawDate = report.date || report.time;
+        if (!rawDate) return null;
+        const parsed = new Date(rawDate);
+        if (isNaN(parsed.getTime())) return null;
+        return parsed;
+      }
+
+      function matchesDateFilter(report) {
+        if (!dateFrom.value && !dateTo.value) return true;
+        const reportDate = getReportDate(report);
+        if (!reportDate) return false;
+
+        const reportDateString = reportDate.toISOString().split("T")[0];
+        if (dateFrom.value && reportDateString < dateFrom.value) return false;
+        if (dateTo.value && reportDateString > dateTo.value) return false;
+        return true;
+      }
+
+      function getReportTime(report) {
+        if (!report.time) return null;
+        const parsed = new Date(report.time);
+        if (isNaN(parsed.getTime())) return null;
+        return (
+          String(parsed.getHours()).padStart(2, "0") +
+          ":" +
+          String(parsed.getMinutes()).padStart(2, "0")
+        );
+      }
+
+      function matchesTimeFilter(report) {
+        if (!timeFrom.value && !timeTo.value) return true;
+        const reportTime = getReportTime(report);
+        if (!reportTime) return false;
+
+        if (timeFrom.value && reportTime < timeFrom.value) return false;
+        if (timeTo.value && reportTime > timeTo.value) return false;
+        return true;
+      }
+
+      function matchesConfidenceFilter(report) {
+        const min = Number(confidenceFrom.value);
+        const max = Number(confidenceTo.value);
+
+        if (isNaN(min) && isNaN(max)) return true;
+        const minimum = isNaN(min) ? 0 : min;
+        const maximum = isNaN(max) ? 100 : max;
+
+        if (
+          !report.detections ||
+          !Array.isArray(report.detections) ||
+          report.detections.length === 0
+        ) {
+          return false;
+        }
+
+        return report.detections.some(function (item) {
+          const confidence = Number(item.confidence);
+          if (isNaN(confidence)) return false;
+          const percent = confidence * 100;
+          return percent >= minimum && percent <= maximum;
+        });
+      }
+
+      function matchesSavedReports(report) {
+        if (!savedReportsOnly.checked) return true;
+        return (
+          report.saved === true ||
+          report.isSaved === true ||
+          report.savedReport === true
+        );
+      }
+
+      function matchesFilters(report) {
+        return (
+          matchesSearch(report) &&
+          matchesClassFilter(report) &&
+          matchesDateFilter(report) &&
+          matchesTimeFilter(report) &&
+          matchesConfidenceFilter(report) &&
+          matchesSavedReports(report)
+        );
+      }
+
+      function getDetectionSummary(report) {
+        const detections = Array.isArray(report.detections)
+          ? report.detections
+          : [];
+        let highest = null;
+
+        detections.forEach(function (item) {
+          const confidence = getConfidencePercent(item);
+          if (
+            confidence !== null &&
+            (highest === null || confidence > highest)
+          ) {
+            highest = confidence;
+          }
+        });
+
+        return {
+          total: detections.length,
+          status: detections.length > 0 ? "Detected" : "Clear",
+          highest: highest,
+        };
+      }
+
+      function toggleDetectedObjects(id) {
+        const details = document.getElementById("detectedObjects-" + id);
+        const button = document.getElementById("detectedObjectsToggle-" + id);
+        if (!details || !button) return;
+        details.classList.toggle("open");
+        button.classList.toggle("open");
+      }
+
+      function getImageURL(report) {
+        if (!report || !report.image) return null;
+        return (
+          "/uploads/" + encodeURIComponent(report.image)
+        );
+      }
+
+      function renderDetectedCanvas(report, index) {
+        const canvas = document.getElementById("detectedCanvas-" + index);
+        const image = document.getElementById("originalImage-" + index);
+
+        if (!canvas || !image) return;
+
+        function draw() {
+          const width = image.naturalWidth;
+          const height = image.naturalHeight;
+          if (!width || !height) return;
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, width, height);
+          ctx.drawImage(image, 0, 0, width, height);
+
+          const detections = Array.isArray(report.detections)
+            ? report.detections
+            : [];
+
+          detections.forEach(function (item) {
+            const box = getBox(item);
+            if (!box) return;
+
+            const lineWidth = Math.max(2, width / 400);
+            ctx.strokeStyle = "#00e5a0";
+            ctx.lineWidth = lineWidth;
+            ctx.strokeRect(box.x1, box.y1, box.width, box.height);
+
+            const confidence = getConfidencePercent(item);
+            const label =
+              safeText(item.class) +
+              (confidence === null ? "" : " " + confidence + "%");
+
+            const fontSize = Math.max(12, width / 55);
+            ctx.font = "bold " + fontSize + "px Arial";
+            const textWidth = ctx.measureText(label).width;
+            const labelHeight = Math.max(20, width / 45);
+            const labelX = box.x1;
+            const labelY = Math.max(0, box.y1 - labelHeight);
+
+            ctx.fillStyle = "rgba(0,10,18,.88)";
+            ctx.fillRect(labelX, labelY, textWidth + 14, labelHeight);
+            ctx.fillStyle = "#00e5a0";
+            ctx.fillText(label, labelX + 7, Math.max(fontSize, box.y1 - 7));
+          });
+        }
+
+        if (image.complete) {
+          draw();
+        } else {
+          image.onload = draw;
+        }
+      }
+
+      function openReportDetails(index) {
+        const report = reports[index];
+        if (!report) return;
+
+        const modal = document.getElementById("detailsModal");
+        const content = document.getElementById("detailsModalContent");
+
+        let detectionsHTML = "";
+
+        if (
+          report.detections &&
+          Array.isArray(report.detections) &&
+          report.detections.length > 0
+        ) {
+          report.detections.forEach(function (item, detectionIndex) {
+            const confidence = getConfidencePercent(item);
+            const box = getBox(item);
+
+            detectionsHTML += `
+              <div class="modal-detection">
+                  <div class="modal-box">
+                      <small>Detected Object #${detectionIndex + 1}</small>
+                      <strong>${escapeHTML(item.class)}</strong>
+                  </div>
+                  <div class="modal-box">
+                      <small>Confidence</small>
+                      <strong>${confidence === null ? "Not available" : confidence + "%"}</strong>
+                  </div>
+                  <div class="modal-box">
+                      <small>Bounding Box</small>
+                      <strong>${box ? `[${Math.round(box.x1)}, ${Math.round(box.y1)}, ${Math.round(box.x2)}, ${Math.round(box.y2)}]` : "Not available"}</strong>
+                  </div>
+                  <div class="modal-box">
+                      <small>Target Size</small>
+                      <strong>${box ? Math.round(box.width) + " × " + Math.round(box.height) + " px" : "Not available"}</strong>
+                  </div>
+              </div>`;
+          });
+        } else {
+          detectionsHTML = `
+            <div class="modal-box">
+                <small>Detection Result</small>
+                <strong>No objects detected</strong>
+            </div>`;
+        }
+
+        const latitudeText =
+          report.latitude !== undefined ? safeText(report.latitude) : "--";
+
+        const longitudeText =
+          report.longitude !== undefined ? safeText(report.longitude) : "--";
+
+        const imageURL = getImageURL(report);
+
+        const originalImageHTML = imageURL
+          ? `<img id="originalImage-${index}" crossorigin="anonymous" src="${imageURL}" alt="Original Sonar Image">`
+          : `<div class="comparison-placeholder">Original sonar image unavailable.</div>`;
+
+        const detectedImageHTML = imageURL
+          ? `<canvas id="detectedCanvas-${index}"></canvas>`
+          : `<div class="comparison-placeholder">Detected image unavailable.</div>`;
+
+        content.innerHTML = `
+          <h2 class="modal-title">${escapeHTML(report.analysisName || "Sonar Analysis")}</h2>
+          <div class="modal-scroll-content">
+          <div class="image-comparison">
+              <div class="comparison-card">
+                  <h4>🖼 Original Sonar Image</h4>
+                  <div class="comparison-media">${originalImageHTML}</div>
+              </div>
+              <div class="comparison-card">
+                  <h4>🎯 AI Detected Image</h4>
+                  <div class="comparison-media">${detectedImageHTML}</div>
+              </div>
+          </div>
+          <div class="modal-section">
+              <h3>📋 Analysis Information</h3>
+              <div class="modal-info-grid">
+                  <div class="modal-info">
+                      <small>Sonar Image</small>
+                      <strong>${escapeHTML(report.image)}</strong>
+                  </div>
+                  <div class="modal-info">
+                      <small>Date & Time</small>
+                      <strong>${escapeHTML(report.time)}</strong>
+                  </div>
+                  <div class="modal-info">
+                      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                          <small>Location</small>
+                          ${
+                            report.latitude !== undefined &&
+                            report.longitude !== undefined &&
+                            report.latitude !== null &&
+                            report.longitude !== null &&
+                            !isNaN(Number(report.latitude)) &&
+                            !isNaN(Number(report.longitude))
+                              ? `<button type="button" class="map-view-btn" title="View location on map" onclick="viewReportMap(${index})">🗺️ Map View</button>`
+                              : ""
+                          }
+                      </div>
+                      <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                      <strong>📍 Latitude: ${latitudeText}</strong>
+                      <strong>📍 Longitude: ${longitudeText}</strong>
+                  </div>
+              </div>
+          </div>
+          ${getTargetMeasurementHTML(report, "modal")}
+          <div class="modal-section">
+              <h3>🎯 Detection Details</h3>
+              ${detectionsHTML}
+          </div>
+          </div>`;
+
+        modal.classList.add("active");
+
+        if (imageURL) {
+          const image = document.getElementById("originalImage-" + index);
+          if (image) {
+            image.onload = function () {
+              renderDetectedCanvas(report, index);
+            };
+            if (image.complete) {
+              renderDetectedCanvas(report, index);
+            }
+          }
+        }
+      }
+
+      function viewReportMap(index) {
+        const report = reports[index];
+        if (!report) return;
+
+        const latitude = Number(report.latitude);
+        const longitude = Number(report.longitude);
+
+        if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+          return;
+        }
+
+        const mapURL =
+          "https://www.google.com/maps/search/?api=1&query=" +
+          encodeURIComponent(latitude + "," + longitude);
+
+        window.open(mapURL, "_blank", "noopener,noreferrer");
+      }
+
+      function closeDetailsModal(event) {
+        const modal = document.getElementById("detailsModal");
+        if (event && event.target !== modal) return;
+        modal.classList.remove("active");
+      }
+
+      function exportCSV(index) {
+        const report = reports[index];
+        if (!report) return;
+
+        const rows = [
+          [
+            "Analysis Name",
+            "Sonar Image",
+            "Date & Time",
+            "Location",
+            "Latitude",
+            "Longitude",
+            "Detected Object",
+            "Confidence",
+            "X1",
+            "Y1",
+            "X2",
+            "Y2",
+            "Width",
+            "Height",
+            "Estimated Target Size",
+            "Measurement Unit",
+            "Center X",
+            "Center Y",
+          ],
+        ];
+
+        const detections = Array.isArray(report.detections)
+          ? report.detections
+          : [];
+
+        if (detections.length === 0) {
+          rows.push([
+            report.analysisName || "",
+            report.image || "",
+            report.time || "",
+            report.location || "",
+            report.latitude ?? "",
+            report.longitude ?? "",
+            "No objects detected",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+          ]);
+        } else {
+          detections.forEach(function (item) {
+            const box = getBox(item);
+            rows.push([
+              report.analysisName || "",
+              report.image || "",
+              report.time || "",
+              report.location || "",
+              report.latitude ?? "",
+              report.longitude ?? "",
+              item.class || "",
+              getConfidencePercent(item) === null
+                ? ""
+                : getConfidencePercent(item) + "%",
+              box ? Math.round(box.x1) : "",
+              box ? Math.round(box.y1) : "",
+              box ? Math.round(box.x2) : "",
+              box ? Math.round(box.y2) : "",
+              box ? Math.round(box.width) : "",
+              box ? Math.round(box.height) : "",
+              box
+                ? Math.round(box.width) + " × " + Math.round(box.height) + " px"
+                : "",
+              box ? "px" : "",
+              box ? Math.round((box.x1 + box.x2) / 2) : "",
+              box ? Math.round((box.y1 + box.y2) / 2) : "",
+            ]);
+          });
+        }
+
+        const csv = rows
+          .map(function (row) {
+            return row
+              .map(function (value) {
+                return '"' + String(value).replace(/"/g, '""') + '"';
+              })
+              .join(",");
+          })
+          .join("\n");
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download =
+          (report.analysisName || "aquascan-report").replace(
+            /[^a-z0-9-_]+/gi,
+            "_",
+          ) + ".csv";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function exportJSON(index) {
+        const report = reports[index];
+        if (!report) return;
+
+        const blob = new Blob([JSON.stringify(report, null, 2)], {
+          type: "application/json",
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download =
+          (report.analysisName || "aquascan-report").replace(
+            /[^a-z0-9-_]+/gi,
+            "_",
+          ) + ".json";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      async function exportPDF(index) {
+        const report = reports[index];
+        if (!report) return;
+
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          alert(
+            "PDF export library is not available. Please check your internet connection and refresh the Reports page.",
+          );
+          return;
+        }
+
+        const detections = Array.isArray(report.detections)
+          ? report.detections
+          : [];
+        const summary = getDetectionSummary(report);
+        const latitudeText =
+          report.latitude !== undefined ? safeText(report.latitude) : "--";
+        const longitudeText =
+          report.longitude !== undefined ? safeText(report.longitude) : "--";
+
+        const pdf = new window.jspdf.jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: "a4",
+        });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const margin = 18;
+        let y = 20;
+
+        async function loadImageData(url) {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error("Image request failed");
+
+          const blob = await response.blob();
+          const dataURL = await new Promise(function (resolve, reject) {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+              resolve(reader.result);
+            };
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+
+          const image = new Image();
+          await new Promise(function (resolve, reject) {
+            image.onload = resolve;
+            image.onerror = reject;
+            image.src = dataURL;
+          });
+
+          return {
+            dataURL: dataURL,
+            image: image,
+            format:
+              blob.type && blob.type.toLowerCase().includes("png")
+                ? "PNG"
+                : "JPEG",
+          };
+        }
+
+        function createDetectedDataURL(image, reportData) {
+          const canvas = document.createElement("canvas");
+          canvas.width = image.naturalWidth || image.width;
+          canvas.height = image.naturalHeight || image.height;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+          const items = Array.isArray(reportData.detections)
+            ? reportData.detections
+            : [];
+
+          items.forEach(function (item) {
+            const box = getBox(item);
+            if (!box) return;
+
+            const lineWidth = Math.max(2, canvas.width / 400);
+            ctx.strokeStyle = "#00e5a0";
+            ctx.lineWidth = lineWidth;
+            ctx.strokeRect(box.x1, box.y1, box.width, box.height);
+
+            const confidence = getConfidencePercent(item);
+            const label =
+              safeText(item.class) +
+              (confidence === null ? "" : " " + confidence + "%");
+
+            const fontSize = Math.max(12, canvas.width / 55);
+            ctx.font = "bold " + fontSize + "px Arial";
+            const textWidth = ctx.measureText(label).width;
+            const labelHeight = Math.max(20, canvas.width / 45);
+            const labelX = box.x1;
+            const labelY = Math.max(0, box.y1 - labelHeight);
+
+            ctx.fillStyle = "rgba(0,10,18,.88)";
+            ctx.fillRect(labelX, labelY, textWidth + 14, labelHeight);
+            ctx.fillStyle = "#00e5a0";
+            ctx.fillText(label, labelX + 7, Math.max(fontSize, box.y1 - 7));
+          });
+
+          return canvas.toDataURL("image/jpeg", 0.92);
+        }
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(20);
+        pdf.setTextColor(0, 120, 95);
+        pdf.text("AQUASCAN AI", margin, y);
+        y += 8;
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.setTextColor(90, 105, 115);
+        pdf.text("Underwater Side-Scan Sonar Analysis Report", margin, y);
+        y += 12;
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(15);
+        pdf.setTextColor(20, 70, 90);
+        pdf.text(String(report.analysisName || "Sonar Analysis"), margin, y);
+        y += 10;
+
+        pdf.setFontSize(9);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(70, 80, 90);
+
+        const info = [
+          ["Sonar Image", safeText(report.image)],
+          ["Date & Time", safeText(report.time)],
+          ["Latitude", latitudeText],
+          ["Longitude", longitudeText],
+        ];
+
+        info.forEach(function (item) {
+          pdf.setFont("helvetica", "bold");
+          pdf.text(item[0] + ":", margin, y);
+          pdf.setFont("helvetica", "normal");
+          const lines = pdf.splitTextToSize(
+            String(item[1]),
+            pageWidth - margin * 2 - 35,
+          );
+          pdf.text(lines, margin + 30, y);
+          y += Math.max(6, lines.length * 4.5);
+        });
+
+        const imageURL = getImageURL(report);
+        if (imageURL) {
+          try {
+            const loaded = await loadImageData(imageURL);
+            const detectedDataURL = createDetectedDataURL(loaded.image, report);
+
+            const gap = 6;
+            const imageWidth = (pageWidth - margin * 2 - gap) / 2;
+            const maxImageHeight = 68;
+            const naturalRatio = loaded.image.height / loaded.image.width;
+            const imageHeight = Math.min(
+              maxImageHeight,
+              imageWidth * naturalRatio,
+            );
+
+            if (y + imageHeight + 22 > pageHeight - 25) {
+              pdf.addPage();
+              y = 20;
+            }
+
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(11);
+            pdf.setTextColor(20, 70, 90);
+            pdf.text("Comparative Sonar Images", margin, y);
+            y += 5;
+
+            pdf.setFont("helvetica", "bold");
+            pdf.setFontSize(8.5);
+            pdf.setTextColor(70, 80, 90);
+            pdf.text("Original Sonar", margin, y);
+            pdf.text("AI Detected", margin + imageWidth + gap, y);
+            y += 4;
+
+            pdf.addImage(
+              loaded.dataURL,
+              loaded.format,
+              margin,
+              y,
+              imageWidth,
+              imageHeight,
+            );
+
+            pdf.addImage(
+              detectedDataURL,
+              "JPEG",
+              margin + imageWidth + gap,
+              y,
+              imageWidth,
+              imageHeight,
+            );
+
+            y += imageHeight + 10;
+          } catch (error) {
+            console.warn(
+              "Could not add comparative sonar images to PDF:",
+              error,
+            );
+          }
+        }
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(12);
+        pdf.setTextColor(20, 70, 90);
+        pdf.text("Detection Summary", margin, y);
+        y += 8;
+
+        pdf.setFontSize(9);
+        pdf.setTextColor(60, 70, 80);
+
+        const highest =
+          summary.highest === null ? "Not available" : summary.highest + "%";
+
+        pdf.text("Total Objects: " + summary.total, margin, y);
+        pdf.text("AI Status: " + summary.status, margin + 58, y);
+        pdf.text("Confidence: " + highest, margin + 118, y);
+        y += 12;
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(12);
+        pdf.setTextColor(20, 70, 90);
+        pdf.text("Target Measurement", margin, y);
+        y += 7;
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(8);
+        pdf.setTextColor(55, 65, 75);
+        if (detections.length === 0) {
+          pdf.text("No detected target available for measurement", margin, y);
+          y += 8;
+        } else {
+          detections.forEach(function (item, i) {
+            const box = getBox(item);
+            if (!box) {
+              pdf.text(
+                "Target #" + (i + 1) + ": Measurement not available",
+                margin,
+                y,
+              );
+              y += 6;
+              return;
+            }
+            const cx = Math.round((box.x1 + box.x2) / 2);
+            const cy = Math.round((box.y1 + box.y2) / 2);
+            pdf.text(
+              "Target #" +
+                (i + 1) +
+                " (" +
+                String(item.class || "Unknown") +
+                ")",
+              margin,
+              y,
+            );
+            y += 5;
+            pdf.text(
+              "Width: " +
+                Math.round(box.width) +
+                " px | Height: " +
+                Math.round(box.height) +
+                " px",
+              margin + 4,
+              y,
+            );
+            y += 5;
+            pdf.text(
+              "Bounding Box: [" +
+                Math.round(box.x1) +
+                ", " +
+                Math.round(box.y1) +
+                ", " +
+                Math.round(box.x2) +
+                ", " +
+                Math.round(box.y2) +
+                "]",
+              margin + 4,
+              y,
+            );
+            y += 5;
+            pdf.text(
+              "Estimated Target Size: " +
+                Math.round(box.width) +
+                " × " +
+                Math.round(box.height) +
+                " px | Center: (" +
+                cx +
+                ", " +
+                cy +
+                ") px",
+              margin + 4,
+              y,
+            );
+            y += 7;
+          });
+        }
+        pdf.setFontSize(7);
+        pdf.setTextColor(90, 100, 110);
+        const measurementNote =
+          "Measurement is based on the AI bounding box in image pixels. Physical sonar scale/range information is not available in the current report.";
+        pdf
+          .splitTextToSize(measurementNote, pageWidth - margin * 2)
+          .forEach(function (line) {
+            pdf.text(line, margin, y);
+            y += 4;
+          });
+        y += 5;
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(12);
+        pdf.setTextColor(20, 70, 90);
+        pdf.text("Detected Objects", margin, y);
+        y += 7;
+
+        const columns = ["Object", "Confidence", "X1", "Y1", "X2", "Y2"];
+        const colX = [margin, 75, 112, 132, 152, 172];
+
+        function drawHeader() {
+          pdf.setFillColor(235, 245, 247);
+          pdf.rect(margin, y - 5, pageWidth - margin * 2, 8, "F");
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(8);
+          pdf.setTextColor(20, 80, 95);
+          columns.forEach(function (column, i) {
+            pdf.text(column, colX[i], y);
+          });
+          y += 7;
+          pdf.setFont("helvetica", "normal");
+        }
+
+        drawHeader();
+
+        if (detections.length === 0) {
+          pdf.setFontSize(9);
+          pdf.setTextColor(80, 90, 100);
+          pdf.text("No objects detected", margin, y);
+          y += 8;
+        } else {
+          detections.forEach(function (item) {
+            if (y > pageHeight - 25) {
+              pdf.addPage();
+              y = 20;
+              drawHeader();
+            }
+
+            const box = getBox(item);
+            const confidence = getConfidencePercent(item);
+            const values = [
+              String(item.class || ""),
+              confidence === null ? "-" : confidence + "%",
+              box ? Math.round(box.x1) : "-",
+              box ? Math.round(box.y1) : "-",
+              box ? Math.round(box.x2) : "-",
+              box ? Math.round(box.y2) : "-",
+            ];
+
+            pdf.setFontSize(8);
+            pdf.setTextColor(55, 65, 75);
+            values.forEach(function (value, i) {
+              pdf.text(
+                pdf.splitTextToSize(value, i === 0 ? 48 : 30),
+                colX[i],
+                y,
+              );
+            });
+            y += 7;
+          });
+        }
+
+        pdf.setFontSize(8);
+        pdf.setTextColor(120, 130, 140);
+        pdf.text(
+          "AQUASCAN AI • THRYVEX • Underwater Intelligence Platform",
+          pageWidth / 2,
+          pageHeight - 10,
+          { align: "center" },
+        );
+
+        const filename =
+          (report.analysisName || "aquascan-report").replace(
+            /[^a-z0-9-_]+/gi,
+            "_",
+          ) + ".pdf";
+
+        pdf.save(filename);
+      }
+
+      function toggleExportMenu(index) {
+        const menu = document.getElementById("exportMenu-" + index);
+        if (!menu) return;
+
+        document
+          .querySelectorAll(".export-menu.active")
+          .forEach(function (item) {
+            if (item !== menu) {
+              item.classList.remove("active");
+              const oldCard = item.closest(".report-card");
+              if (oldCard) oldCard.classList.remove("export-open");
+            }
+          });
+
+        const isOpen = menu.classList.toggle("active");
+        const card = menu.closest(".report-card");
+        if (card) {
+          card.classList.toggle("export-open", isOpen);
+        }
+      }
+
+      function closeExportMenu(index) {
+        const menu = document.getElementById("exportMenu-" + index);
+        if (menu) {
+          menu.classList.remove("active");
+          const card = menu.closest(".report-card");
+          if (card) card.classList.remove("export-open");
+        }
+      }
+
+      document.addEventListener("click", function (event) {
+        if (!event.target.closest(".export-dropdown")) {
+          document
+            .querySelectorAll(".export-menu.active")
+            .forEach(function (menu) {
+              menu.classList.remove("active");
+              const card = menu.closest(".report-card");
+              if (card) card.classList.remove("export-open");
+            });
+        }
+      });
+
+      function displayReports() {
+        container.innerHTML = "";
+
+        const filteredReports = reports.filter(function (report) {
+          return matchesFilters(report);
+        });
+
+        if (filteredReports.length === 0) {
+          if (reports.length === 0) {
+            reportCount.textContent = "";
+          } else {
+            reportCount.textContent = "0 matching reports";
+          }
+        } else {
+          reportCount.textContent =
+            filteredReports.length +
+            (filteredReports.length === 1 ? " report found" : " reports found");
+        }
+
+        if (reports.length === 0) {
+          container.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">📊</div>
+                <h2>No Reports Available</h2>
+                <p>Complete a sonar image analysis from the dashboard to generate detection reports.</p>
+            </div>`;
+          return;
+        }
+
+        if (filteredReports.length === 0) {
+          container.innerHTML = `
+            <div class="no-results">
+                <div class="no-results-icon">🔍</div>
+                <h2>No Matching Reports</h2>
+                <p>Try another report name, image name, class, confidence, date, time, location or filter setting.</p>
+            </div>`;
+          return;
+        }
+
+        filteredReports
+          .slice()
+          .reverse()
+          .forEach(function (report) {
+            const currentReportIndex = reports.indexOf(report);
+            let analysisName = report.analysisName;
+
+            if (!analysisName) {
+              analysisName = "Sonar Analysis #" + (currentReportIndex + 1);
+              report.analysisName = analysisName;
+            }
+
+            const detections = Array.isArray(report.detections)
+              ? report.detections
+              : [];
+            const summary = getDetectionSummary(report);
+            const highestConfidence =
+              summary.highest === null
+                ? "Not available"
+                : summary.highest + "%";
+
+            let detectedRowsHTML = "";
+
+            if (detections.length > 0) {
+              detections.forEach(function (item) {
+                const confidence = getConfidencePercent(item);
+                const box = getBox(item);
+
+                detectedRowsHTML += `
+                  <div class="detected-object-row">
+                      <div class="detected-object-name">${escapeHTML(item.class)}</div>
+                      <div class="confidence-value">${confidence === null ? "Not available" : confidence + "%"}</div>
+                      <div class="box-mini">${box ? "Box: " + Math.round(box.width) + " × " + Math.round(box.height) + " px" : "Box unavailable"}</div>
+                  </div>`;
+              });
+            } else {
+              detectedRowsHTML = `
+                <div class="detected-object-row">
+                    <div class="detected-object-name">No objects detected</div>
+                    <div class="confidence-value">—</div>
+                    <div class="box-mini">—</div>
+                </div>`;
+            }
+
+            let locationText = "Not available";
+            if (report.location) {
+              locationText = safeText(report.location);
+            } else if (
+              report.latitude !== undefined &&
+              report.longitude !== undefined
+            ) {
+              locationText =
+                safeText(report.latitude) + ", " + safeText(report.longitude);
+            }
+
+            const card = document.createElement("div");
+            card.className = "report-card";
+            card.innerHTML = `
+              <div class="report-header">
+                  <div class="report-title-group" id="titleGroup-${currentReportIndex}">
+                      <h2 id="reportTitle-${currentReportIndex}">${escapeHTML(analysisName)}</h2>
+                      <button type="button" class="edit-name-btn" title="Edit analysis name" onclick="editAnalysisName(${currentReportIndex})">✏️</button>
+                  </div>
+                  <div class="name-edit-box" id="nameEdit-${currentReportIndex}">
+                      <input type="text" class="name-edit-input" id="nameInput-${currentReportIndex}" value="${escapeHTML(analysisName)}" maxlength="80">
+                      <button type="button" class="name-save-btn" onclick="saveAnalysisName(${currentReportIndex})">Save</button>
+                      <button type="button" class="name-cancel-btn" onclick="cancelAnalysisName(${currentReportIndex})">Cancel</button>
+                  </div>
+                  <div class="report-status-group">
+                      <span class="status">Completed</span>
+                      <button type="button" class="save-report-btn ${report.saved ? "saved" : ""}" title="${report.saved ? "Unsave report" : "Save report"}" onclick="toggleSaveReport(${currentReportIndex})">
+                          ${report.saved ? "★" : "☆"}
+                      </button>
+                  </div>
+              </div>
+
+              <div class="report-grid">
+                  <div class="detail">
+                      <small>Sonar Image</small>
+                      <strong>${escapeHTML(report.image)}</strong>
+                  </div>
+                  <div class="detail">
+                      <small>Analysis Date & Time</small>
+                      <strong>${escapeHTML(report.time)}</strong>
+                  </div>
+<div class="detail">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+        <small>Location</small>
+        ${
+          report.latitude !== undefined &&
+          report.longitude !== undefined &&
+          report.latitude !== null &&
+          report.longitude !== null &&
+          !isNaN(Number(report.latitude)) &&
+          !isNaN(Number(report.longitude))
+            ? `<button type="button" class="map-view-btn" title="View location on map" onclick="viewReportMap(${currentReportIndex})">🗺️ Map View</button>`
+            : ""
+        }
+    </div>
+
+    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 9px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+            <span style="font-size: 15px;">📍 Latitude</span>
+            <strong style="color: #00e5a0; font-size: 16px;">
+                ${report.latitude !== undefined ? report.latitude : "--"}
+            </strong>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+            <span style="font-size: 15px;">📍 Longitude</span>
+            <strong style="color: #00e5a0; font-size: 16px;">
+                ${report.longitude !== undefined ? report.longitude : "--"}
+            </strong>
+        </div>
+    </div>
+</div>
+              </div>
+
+              <h3 class="summary-title">🎯 Detection Summary</h3>
+
+              <div class="detection-summary">
+                  <div class="summary-item">
+                      <small>Total Objects</small>
+                      <strong>${summary.total}</strong>
+                  </div>
+                  <div class="summary-item">
+                      <small>AI Status</small>
+                      <strong>${summary.status}</strong>
+                  </div>
+                  <div class="summary-item">
+                      <small>Detection Confidence</small>
+                      <strong>${highestConfidence}</strong>
+                  </div>
+              </div>
+
+              ${getTargetMeasurementHTML(report, "card")}
+
+              <button type="button" class="detected-objects-toggle" id="detectedObjectsToggle-${currentReportIndex}" onclick="toggleDetectedObjects(${currentReportIndex})">
+                  <span class="detected-objects-left"><span>🎯 Detected Objects</span></span>
+                  <span class="detected-objects-arrow">▶</span>
+              </button>
+
+              <div class="detected-objects-details" id="detectedObjects-${currentReportIndex}">
+                  ${detectedRowsHTML}
+              </div>
+
+              <div class="report-actions">
+                  <button type="button" class="report-action-btn" onclick="openReportDetails(${currentReportIndex})">🔎 Full Report Details</button>
+                  <div class="export-dropdown">
+                      <button type="button" class="report-action-btn" onclick="event.stopPropagation(); toggleExportMenu(${currentReportIndex})">📥 Export ▾</button>
+                      <div class="export-menu" id="exportMenu-${currentReportIndex}">
+                          <button type="button" class="export-option" onclick="event.stopPropagation(); exportPDF(${currentReportIndex}); closeExportMenu(${currentReportIndex});">📄 Export PDF Report</button>
+                          <button type="button" class="export-option" onclick="event.stopPropagation(); exportCSV(${currentReportIndex}); closeExportMenu(${currentReportIndex});">📊 Export CSV</button>
+                          <button type="button" class="export-option" onclick="event.stopPropagation(); exportJSON(${currentReportIndex}); closeExportMenu(${currentReportIndex});">📄 Export JSON</button>
+                      </div>
+                  </div>
+              </div>`;
+
+            container.appendChild(card);
+          });
+
+        localStorage.setItem("aquascanReports", JSON.stringify(reports));
+      }
+
+      function toggleSaveReport(index) {
+        if (!reports[index]) return;
+        reports[index].saved = !reports[index].saved;
+        localStorage.setItem("aquascanReports", JSON.stringify(reports));
+        displayReports();
+      }
+
+      function editAnalysisName(index) {
+        const titleGroup = document.getElementById("titleGroup-" + index);
+        const editBox = document.getElementById("nameEdit-" + index);
+        const input = document.getElementById("nameInput-" + index);
+
+        if (!titleGroup || !editBox || !input) return;
+        titleGroup.style.display = "none";
+        editBox.classList.add("active");
+        input.focus();
+        input.select();
+      }
+
+      function saveAnalysisName(index) {
+        const input = document.getElementById("nameInput-" + index);
+        if (!input) return;
+
+        let newName = input.value.trim();
+        if (!newName) {
+          alert("Please enter an analysis name.");
+          input.focus();
+          return;
+        }
+
+        reports[index].analysisName = newName;
+        localStorage.setItem("aquascanReports", JSON.stringify(reports));
+        displayReports();
+      }
+
+      function cancelAnalysisName(index) {
+        displayReports();
+      }
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter") return;
+        const active = document.activeElement;
+        if (active && active.classList.contains("name-edit-input")) {
+          const id = active.id;
+          const index = id.replace("nameInput-", "");
+          saveAnalysisName(Number(index));
+        }
+      });
+
+      searchInput.addEventListener("input", displayReports);
+
+      applyFilterButton.addEventListener("click", function () {
+        displayReports();
+        filterPanel.classList.remove("active");
+        filterButton.classList.remove("active");
+      });
+
+      resetFilterButton.addEventListener("click", function () {
+        classSelect.value = "all";
+        dateFrom.value = "";
+        dateTo.value = "";
+        timeFrom.value = "";
+        timeTo.value = "";
+        confidenceFrom.value = 0;
+        confidenceTo.value = 100;
+        savedReportsOnly.checked = false;
+        displayReports();
+      });
+
+      clearButton.addEventListener("click", function () {
+        searchInput.value = "";
+        classSelect.value = "all";
+        dateFrom.value = "";
+        dateTo.value = "";
+        timeFrom.value = "";
+        timeTo.value = "";
+        confidenceFrom.value = 0;
+        confidenceTo.value = 100;
+        savedReportsOnly.checked = false;
+        displayReports();
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          document.getElementById("detailsModal").classList.remove("active");
+          document
+            .querySelectorAll(".export-menu.active")
+            .forEach(function (menu) {
+              menu.classList.remove("active");
+              const card = menu.closest(".report-card");
+              if (card) card.classList.remove("export-open");
+            });
+        }
+      });
+
+      /* CUSTOM CALENDAR & TIME PICKERS LOGIC */
+      function initCustomCalendar() {
+        const calendar = document.getElementById("customCalendar");
+        const daysContainer = document.getElementById("calendarDays");
+        const monthButton = document.getElementById("calendarMonthButton");
+        const yearButton = document.getElementById("calendarYearButton");
+        const picker = document.getElementById("calendarPicker");
+        const monthsContainer = document.getElementById("calendarMonths");
+        const yearsContainer = document.getElementById("calendarYears");
+
+        const timePicker = document.getElementById("customTimePicker");
+        const timeHourGrid = document.getElementById("timeHourGrid");
+        const timeMinuteGrid = document.getElementById("timeMinuteGrid");
+        const timeCurrent = document.getElementById("timePickerCurrent");
+
+        let activeDateInput = null;
+        let activeTimeInput = null;
+        let viewDate = new Date();
+        let selectedHour = null;
+        let selectedMinute = null;
+
+        if (!calendar || !daysContainer || !timePicker) return;
+
+        function pad(value) {
+          return String(value).padStart(2, "0");
+        }
+
+        function formatDate(date) {
+          return (
+            date.getFullYear() +
+            "-" +
+            pad(date.getMonth() + 1) +
+            "-" +
+            pad(date.getDate())
+          );
+        }
+
+        function parseDate(value) {
+          if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+          const parts = value.split("-").map(Number);
+          const d = new Date(parts[0], parts[1] - 1, parts[2]);
+          if (
+            d.getFullYear() !== parts[0] ||
+            d.getMonth() !== parts[1] - 1 ||
+            d.getDate() !== parts[2]
+          ) {
+            return null;
+          }
+          return d;
+        }
+
+        function positionPopup(popup, input) {
+          const rect = input.getBoundingClientRect();
+          const gap = 8;
+          const popupWidth = popup.offsetWidth || 320;
+          const popupHeight = popup.offsetHeight || 300;
+
+          let left = rect.left;
+          let top = rect.bottom + gap;
+
+          if (left + popupWidth > window.innerWidth - 12) {
+            left = Math.max(12, window.innerWidth - popupWidth - 12);
+          }
+
+          if (top + popupHeight > window.innerHeight - 12) {
+            top = Math.max(12, rect.top - popupHeight - gap);
+          }
+
+          popup.style.left = left + "px";
+          popup.style.top = top + "px";
+        }
+
+        function closeDatePicker() {
+          calendar.classList.remove("active");
+          picker.classList.remove("active");
+          if (monthButton) monthButton.classList.remove("active");
+          if (yearButton) yearButton.classList.remove("active");
+          document
+            .querySelectorAll(
+              '.picker-icon[data-picker="dateFrom"], .picker-icon[data-picker="dateTo"]',
+            )
+            .forEach(function (button) {
+              button.classList.remove("active");
+            });
+          activeDateInput = null;
+        }
+
+        function closeTimePicker() {
+          timePicker.classList.remove("active");
+          document
+            .querySelectorAll(
+              '.picker-icon[data-picker="timeFrom"], .picker-icon[data-picker="timeTo"]',
+            )
+            .forEach(function (button) {
+              button.classList.remove("active");
+            });
+          activeTimeInput = null;
+        }
+
+        function closeAllPickers() {
+          closeDatePicker();
+          closeTimePicker();
+        }
+
+        function renderMonthYearPicker() {
+          if (!monthsContainer || !yearsContainer) return;
+          monthsContainer.innerHTML = "";
+          yearsContainer.innerHTML = "";
+          monthsContainer.style.display = "none";
+          yearsContainer.style.display = "none";
+
+          const monthNames = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ];
+
+          monthNames.forEach(function (name, index) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = name;
+            if (index === viewDate.getMonth()) button.classList.add("selected");
+
+            button.addEventListener("click", function (event) {
+              event.stopPropagation();
+              monthsContainer.style.display = "none";
+              yearsContainer.style.display = "none";
+              viewDate.setMonth(index);
+              renderCalendar();
+            });
+            monthsContainer.appendChild(button);
+          });
+
+          const selectedYear = viewDate.getFullYear();
+          for (
+            let year = selectedYear - 10;
+            year <= selectedYear + 10;
+            year++
+          ) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = year;
+            if (year === selectedYear) button.classList.add("selected");
+
+            button.addEventListener("click", function (event) {
+              event.stopPropagation();
+              monthsContainer.style.display = "none";
+              yearsContainer.style.display = "none";
+              viewDate.setFullYear(year);
+              renderCalendar();
+            });
+            yearsContainer.appendChild(button);
+          }
+        }
+
+        function renderCalendar() {
+          const year = viewDate.getFullYear();
+          const month = viewDate.getMonth();
+          const firstDay = new Date(year, month, 1);
+          const lastDay = new Date(year, month + 1, 0);
+          const previousLastDay = new Date(year, month, 0).getDate();
+          const selected = activeDateInput
+            ? parseDate(activeDateInput.value)
+            : null;
+          const today = new Date();
+
+          if (monthButton) {
+            monthButton.textContent = firstDay.toLocaleString("en-US", {
+              month: "long",
+            });
+          }
+          if (yearButton) {
+            yearButton.textContent = String(year);
+          }
+
+          renderMonthYearPicker();
+          picker.classList.remove("active");
+          daysContainer.innerHTML = "";
+
+          for (let i = firstDay.getDay() - 1; i >= 0; i--) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "other-month";
+            button.textContent = previousLastDay - i;
+            button.disabled = true;
+            daysContainer.appendChild(button);
+          }
+
+          for (let d = 1; d <= lastDay.getDate(); d++) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = d;
+
+            const currentDate = new Date(year, month, d);
+            if (
+              today.getFullYear() === year &&
+              today.getMonth() === month &&
+              today.getDate() === d
+            ) {
+              button.classList.add("today");
+            }
+
+            if (
+              selected &&
+              selected.getFullYear() === year &&
+              selected.getMonth() === month &&
+              selected.getDate() === d
+            ) {
+              button.classList.add("selected");
+            }
+
+            button.addEventListener("click", function (event) {
+              event.stopPropagation();
+              if (activeDateInput) {
+                activeDateInput.value = formatDate(currentDate);
+              }
+              closeDatePicker();
+              displayReports();
+            });
+
+            daysContainer.appendChild(button);
+          }
+
+          const totalCells = daysContainer.children.length;
+          const remainingCells = (7 - (totalCells % 7)) % 7;
+          for (let i = 1; i <= remainingCells; i++) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "other-month";
+            button.textContent = i;
+            button.disabled = true;
+            daysContainer.appendChild(button);
+          }
+        }
+
+        function renderTimePicker() {
+          if (!timeHourGrid || !timeMinuteGrid) return;
+          timeHourGrid.innerHTML = "";
+          timeMinuteGrid.innerHTML = "";
+
+          for (let h = 0; h < 24; h++) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "time-option";
+            const val = pad(h);
+            button.textContent = val;
+            if (selectedHour === val) button.classList.add("selected");
+
+            button.addEventListener("click", function (event) {
+              event.stopPropagation();
+              selectedHour = val;
+              updateTimeDisplay();
+              renderTimePicker();
+            });
+
+            timeHourGrid.appendChild(button);
+          }
+
+          for (let m = 0; m < 60; m += 5) {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = "time-option";
+            const val = pad(m);
+            button.textContent = val;
+            if (selectedMinute === val) button.classList.add("selected");
+
+            button.addEventListener("click", function (event) {
+              event.stopPropagation();
+              selectedMinute = val;
+              updateTimeDisplay();
+              renderTimePicker();
+            });
+
+            timeMinuteGrid.appendChild(button);
+          }
+        }
+
+        function updateTimeDisplay() {
+          if (timeCurrent) {
+            timeCurrent.textContent =
+              (selectedHour || "--") + ":" + (selectedMinute || "--");
+          }
+        }
+
+        document.querySelectorAll(".picker-icon").forEach(function (button) {
+          button.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const targetId = button.getAttribute("data-picker");
+            const targetInput = document.getElementById(targetId);
+
+            if (!targetInput) return;
+
+            if (targetId === "dateFrom" || targetId === "dateTo") {
+              if (
+                activeDateInput === targetInput &&
+                calendar.classList.contains("active")
+              ) {
+                closeDatePicker();
+                return;
+              }
+
+              closeAllPickers();
+              activeDateInput = targetInput;
+              button.classList.add("active");
+
+              const parsed = parseDate(targetInput.value);
+              viewDate = parsed || new Date();
+
+              renderCalendar();
+              calendar.classList.add("active");
+              positionPopup(calendar, targetInput);
+            } else if (targetId === "timeFrom" || targetId === "timeTo") {
+              if (
+                activeTimeInput === targetInput &&
+                timePicker.classList.contains("active")
+              ) {
+                closeTimePicker();
+                return;
+              }
+
+              closeAllPickers();
+              activeTimeInput = targetInput;
+              button.classList.add("active");
+
+              const val = targetInput.value;
+              if (val && /^\d{2}:\d{2}$/.test(val)) {
+                const parts = val.split(":");
+                selectedHour = parts[0];
+                selectedMinute = parts[1];
+              } else {
+                selectedHour = "12";
+                selectedMinute = "00";
+              }
+
+              updateTimeDisplay();
+              renderTimePicker();
+              timePicker.classList.add("active");
+              positionPopup(timePicker, targetInput);
+            }
+          });
+        });
+
+        document
+          .getElementById("prevMonth")
+          ?.addEventListener("click", function (event) {
+            event.stopPropagation();
+            viewDate.setMonth(viewDate.getMonth() - 1);
+            renderCalendar();
+          });
+
+        document
+          .getElementById("nextMonth")
+          ?.addEventListener("click", function (event) {
+            event.stopPropagation();
+            viewDate.setMonth(viewDate.getMonth() + 1);
+            renderCalendar();
+          });
+
+        document
+          .getElementById("calendarMonthButton")
+          ?.addEventListener("click", function (event) {
+            event.stopPropagation();
+            monthsContainer.style.display = "grid";
+            yearsContainer.style.display = "none";
+            picker.classList.toggle("active");
+          });
+
+        document
+          .getElementById("calendarYearButton")
+          ?.addEventListener("click", function (event) {
+            event.stopPropagation();
+            document.getElementById("calendarPickerTitle").textContent =
+              "Select year";
+            monthsContainer.style.display = "none";
+            yearsContainer.style.display = "grid";
+            picker.classList.toggle("active");
+          });
+
+        document
+          .getElementById("todayBtn")
+          ?.addEventListener("click", function (event) {
+            event.stopPropagation();
+            if (activeDateInput) {
+              activeDateInput.value = formatDate(new Date());
+            }
+            closeDatePicker();
+            displayReports();
+          });
+
+        document
+          .getElementById("clearDateBtn")
+          ?.addEventListener("click", function (event) {
+            event.stopPropagation();
+            if (activeDateInput) activeDateInput.value = "";
+            closeDatePicker();
+            displayReports();
+          });
+
+        document
+          .getElementById("applyTimeBtn")
+          ?.addEventListener("click", function (event) {
+            event.stopPropagation();
+            if (activeTimeInput) {
+              activeTimeInput.value =
+                (selectedHour || "00") + ":" + (selectedMinute || "00");
+            }
+            closeTimePicker();
+            displayReports();
+          });
+
+        document
+          .getElementById("clearTimeBtn")
+          ?.addEventListener("click", function (event) {
+            event.stopPropagation();
+            if (activeTimeInput) activeTimeInput.value = "";
+            closeTimePicker();
+            displayReports();
+          });
+
+        document.addEventListener("click", function (event) {
+          if (
+            !calendar.contains(event.target) &&
+            !timePicker.contains(event.target)
+          ) {
+            closeAllPickers();
+          }
+        });
+      }
+
+      // INITIALIZE APP LOGIC ON DOM LOAD
+      document.addEventListener("DOMContentLoaded", function () {
+        createClassFilter();
+        displayReports();
+        initCustomCalendar();
+      });
+    </script>
+  </body>
+</html>

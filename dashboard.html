@@ -1,0 +1,4165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>AQUASCAN AI | Detection Dashboard</title>
+
+    <style>
+      /* =========================
+   GLOBAL
+========================= */
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background:
+          linear-gradient(135deg, rgba(1, 8, 18, 0.92), rgba(1, 17, 29, 0.88)),
+          url("underwater_hero_background.png");
+
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+
+        color: #fff;
+        min-height: 100vh;
+
+        font-size: 15px;
+      }
+
+      /* =========================
+   NAVBAR
+========================= */
+
+      nav {
+        height: 72px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 0 6%;
+
+        background: rgba(1, 8, 17, 0.82);
+
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+
+        border-bottom: 1px solid rgba(0, 217, 255, 0.16);
+
+        position: sticky;
+        top: 0;
+
+        z-index: 1000;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        cursor: pointer;
+
+        user-select: none;
+      }
+
+      .brand img {
+        width: 40px;
+        height: 40px;
+
+        object-fit: contain;
+        border-radius: 50%;
+
+        filter: drop-shadow(0 0 9px rgba(0, 217, 255, 0.42));
+
+        transition: 0.3s ease;
+      }
+
+      .brand:hover img {
+        transform: scale(1.07) rotate(2deg);
+      }
+
+      .brand-text {
+        font-size: 20px;
+        letter-spacing: 3px;
+        font-weight: bold;
+        color: #fff;
+      }
+
+      .brand-text span {
+        color: #00e5a0;
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .home-link {
+        color: #00e5a0;
+
+        text-decoration: none;
+
+        font-size: 15px;
+        font-weight: bold;
+
+        padding: 9px 13px;
+
+        border-radius: 8px;
+
+        transition: 0.25s ease;
+      }
+
+      .home-link:hover {
+        color: #00d9ff;
+        background: rgba(0, 217, 255, 0.07);
+      }
+
+      /* =========================
+   HAMBURGER
+========================= */
+
+      .menu-btn {
+        width: 42px;
+        height: 42px;
+
+        border: 1px solid rgba(0, 217, 255, 0.28);
+
+        border-radius: 10px;
+
+        background: rgba(0, 217, 255, 0.055);
+
+        display: flex;
+        flex-direction: column;
+
+        justify-content: center;
+        align-items: center;
+
+        gap: 5px;
+
+        cursor: pointer;
+
+        transition: 0.3s ease;
+      }
+
+      .menu-btn span {
+        width: 19px;
+        height: 2px;
+
+        background: #00e5a0;
+
+        border-radius: 5px;
+
+        transition: 0.3s ease;
+      }
+
+      .menu-btn:hover {
+        border-color: #00e5a0;
+
+        background: rgba(0, 229, 160, 0.08);
+
+        box-shadow: 0 0 20px rgba(0, 229, 160, 0.16);
+      }
+
+      .menu-btn.active span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+
+      .menu-btn.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .menu-btn.active span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+
+      /* =========================
+   SIDE MENU
+========================= */
+
+      .menu-panel {
+        position: fixed;
+
+        top: 72px;
+        right: -310px;
+
+        width: 285px;
+        max-height: calc(100vh - 72px);
+
+        overflow-y: auto;
+
+        background: rgba(2, 13, 24, 0.97);
+
+        border-left: 1px solid rgba(0, 217, 255, 0.18);
+        border-bottom: 1px solid rgba(0, 217, 255, 0.18);
+
+        padding: 25px 20px;
+
+        z-index: 2000;
+
+        transition: 0.35s ease;
+
+        box-shadow: -15px 20px 55px rgba(0, 0, 0, 0.48);
+      }
+
+      .menu-panel.active {
+        right: 0;
+      }
+
+      .menu-title {
+        color: #00e5a0;
+
+        font-size: 13px;
+
+        letter-spacing: 2px;
+
+        margin-bottom: 18px;
+
+        padding-left: 10px;
+      }
+
+      .menu-panel a {
+        display: block;
+
+        color: #b7cbd4;
+
+        text-decoration: none;
+
+        padding: 13px 12px;
+
+        border-radius: 9px;
+
+        margin-bottom: 5px;
+
+        font-size: 15px;
+
+        transition: 0.25s ease;
+      }
+
+      .menu-panel a:hover {
+        background: linear-gradient(
+          90deg,
+          rgba(0, 229, 160, 0.1),
+          rgba(0, 217, 255, 0.035)
+        );
+
+        color: #00e5a0;
+
+        transform: translateX(3px);
+      }
+
+      /* =========================
+   MAIN
+========================= */
+
+      .container {
+        width: 100%;
+        max-width: 1450px;
+
+        margin: auto;
+
+        padding: 55px 6% 70px;
+      }
+
+      /* =========================
+   HEADING
+========================= */
+
+      .heading {
+        margin-bottom: 30px;
+
+        position: relative;
+      }
+
+      .heading::before {
+        content: "";
+
+        display: block;
+
+        width: 52px;
+        height: 3px;
+
+        margin-bottom: 18px;
+
+        background: linear-gradient(90deg, #00e5a0, #00d9ff);
+
+        border-radius: 10px;
+
+        box-shadow: 0 0 14px rgba(0, 229, 160, 0.22);
+      }
+
+      .heading h1 {
+        font-size: 36px;
+
+        margin-bottom: 9px;
+
+        letter-spacing: 0.3px;
+
+        line-height: 1.2;
+      }
+
+      .heading h1 span {
+        color: #00e5a0;
+
+        text-shadow: 0 0 18px rgba(0, 229, 160, 0.13);
+      }
+
+      .heading p {
+        color: #9ab0bb;
+
+        line-height: 1.6;
+
+        font-size: 16px;
+      }
+
+      /* =========================
+   DASHBOARD GRID
+========================= */
+
+      .dashboard {
+        display: grid;
+
+        grid-template-columns: minmax(0, 1fr) 330px;
+
+        gap: 25px;
+
+        align-items: start;
+      }
+
+      /* =========================
+   INITIAL DETECTION BLOCK
+========================= */
+
+      .left-column {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 25px;
+
+        min-width: 0;
+      }
+
+      #initialDetectionResult {
+        display: block;
+
+        width: 100%;
+
+        padding: 22px;
+
+        background: linear-gradient(
+          145deg,
+          rgba(4, 25, 40, 0.76),
+          rgba(2, 17, 29, 0.68)
+        );
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+
+        border: 1px solid rgba(0, 229, 160, 0.17);
+
+        border-radius: 17px;
+
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+
+        flex-shrink: 0;
+
+        height: auto;
+      }
+
+      #initialDetectionResult h3 {
+        color: #00e5a0;
+
+        margin-bottom: 15px;
+
+        font-size: 18px;
+      }
+
+      #initialObjectList {
+        width: 100%;
+      }
+
+      #initialObjectList .empty-detection {
+        color: #8199a7;
+
+        padding: 8px 0;
+
+        font-size: 14px;
+      }
+
+      /* =========================
+   UPLOAD BOX
+========================= */
+
+      .upload-box {
+        min-height: 470px;
+
+        border: 1px dashed rgba(0, 229, 160, 0.34);
+
+        border-radius: 20px;
+
+        background: linear-gradient(
+          145deg,
+          rgba(4, 25, 40, 0.78),
+          rgba(2, 17, 29, 0.7)
+        );
+
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        text-align: center;
+
+        padding: 35px;
+
+        box-shadow: 0 22px 65px rgba(0, 0, 0, 0.3);
+
+        position: relative;
+
+        overflow: hidden;
+
+        transition: 0.35s ease;
+      }
+
+      .upload-box::before {
+        content: "";
+
+        position: absolute;
+
+        width: 220px;
+        height: 220px;
+
+        border-radius: 50%;
+
+        background: radial-gradient(
+          circle,
+          rgba(0, 229, 160, 0.09),
+          transparent 70%
+        );
+
+        top: -100px;
+        right: -70px;
+
+        pointer-events: none;
+      }
+
+      .upload-box::after {
+        content: "";
+
+        position: absolute;
+
+        width: 180px;
+        height: 180px;
+
+        border-radius: 50%;
+
+        background: radial-gradient(
+          circle,
+          rgba(0, 217, 255, 0.07),
+          transparent 70%
+        );
+
+        bottom: -90px;
+        left: -60px;
+
+        pointer-events: none;
+      }
+
+      .upload-box:hover {
+        border-color: #00e5a0;
+
+        box-shadow:
+          0 0 35px rgba(0, 229, 160, 0.08),
+          0 22px 65px rgba(0, 0, 0, 0.35);
+      }
+
+      .upload-box.drag-over {
+        border-color: #00d9ff;
+
+        background: rgba(0, 70, 85, 0.18);
+
+        transform: scale(1.005);
+
+        box-shadow: 0 0 35px rgba(0, 217, 255, 0.13);
+      }
+
+      .upload-content {
+        position: relative;
+        z-index: 1;
+
+        width: 100%;
+      }
+
+      .upload-icon {
+        width: 76px;
+        height: 76px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        margin: 0 auto 16px;
+
+        border-radius: 20px;
+
+        background: linear-gradient(
+          145deg,
+          rgba(0, 229, 160, 0.12),
+          rgba(0, 217, 255, 0.08)
+        );
+
+        border: 1px solid rgba(0, 229, 160, 0.18);
+
+        font-size: 42px;
+
+        box-shadow: 0 0 28px rgba(0, 229, 160, 0.07);
+
+        transition: 0.3s ease;
+      }
+
+      .upload-box:hover .upload-icon {
+        transform: translateY(-3px);
+
+        border-color: rgba(0, 229, 160, 0.35);
+      }
+
+      .upload-content h2 {
+        margin: 8px 0 10px;
+
+        font-size: 25px;
+      }
+
+      .upload-content p {
+        color: #8199a7;
+
+        margin-bottom: 24px;
+
+        font-size: 15px;
+
+        line-height: 1.6;
+      }
+
+      /* =========================
+   UPLOAD BUTTON
+========================= */
+
+      .upload-btn {
+        display: inline-flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 8px;
+
+        padding: 13px 24px;
+
+        background: linear-gradient(135deg, #00e5a0, #00d9a0);
+
+        color: #00140b;
+
+        border-radius: 9px;
+
+        font-weight: bold;
+        font-size: 15px;
+
+        cursor: pointer;
+
+        transition: 0.3s ease;
+
+        box-shadow: 0 8px 25px rgba(0, 229, 160, 0.13);
+      }
+
+      .upload-btn:hover {
+        transform: translateY(-2px);
+
+        box-shadow: 0 10px 30px rgba(0, 229, 160, 0.22);
+      }
+
+      input[type="file"] {
+        display: none;
+      }
+
+      /* =========================
+   FILE NAME
+========================= */
+
+      #fileName {
+        color: #00e5a0;
+
+        margin: 15px auto 0;
+
+        font-size: 14px;
+
+        max-width: 90%;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+      }
+
+      /* =========================
+   IMAGE + ACTIONS
+========================= */
+
+      .preview-action-row {
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 18px;
+
+        width: 100%;
+
+        margin-top: 17px;
+      }
+
+      .image-container {
+        position: relative;
+
+        display: none;
+
+        width: fit-content;
+
+        max-width: calc(100% - 180px);
+
+        margin: 0;
+
+        border-radius: 12px;
+
+        overflow: hidden;
+
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.35);
+      }
+
+      #preview {
+        display: block;
+
+        max-width: 100%;
+        max-height: 350px;
+
+        border-radius: 10px;
+      }
+
+      #boxCanvas {
+        position: absolute;
+
+        top: 0;
+        left: 0;
+
+        pointer-events: none;
+
+        border-radius: 10px;
+      }
+
+      /* =========================
+   ACTION BUTTONS
+========================= */
+
+      .action-buttons {
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        justify-content: center;
+
+        gap: 10px;
+
+        flex-shrink: 0;
+
+        min-width: 160px;
+      }
+
+      /* =========================
+   DETECT BUTTON
+========================= */
+
+      .detect-btn {
+        display: none;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 8px;
+
+        padding: 13px 25px;
+
+        margin-top: 0;
+
+        border: 1px solid rgba(0, 229, 160, 0.35);
+
+        border-radius: 9px;
+
+        background: linear-gradient(135deg, #19d37b, #00d9a0);
+
+        color: #00140b;
+
+        font-weight: bold;
+        font-size: 15px;
+
+        cursor: pointer;
+
+        transition: 0.3s ease;
+
+        box-shadow: 0 8px 25px rgba(0, 229, 160, 0.12);
+      }
+
+      .detect-btn:hover {
+        transform: translateY(-2px);
+
+        box-shadow: 0 10px 30px rgba(0, 229, 160, 0.2);
+      }
+
+      .detect-btn:disabled {
+        opacity: 0.6;
+
+        cursor: not-allowed;
+
+        transform: none;
+      }
+
+      .detect-btn.loading {
+        cursor: wait;
+      }
+
+      /* =========================
+   COMPARISON BUTTON
+========================= */
+
+      .compare-btn {
+        display: none;
+
+        align-items: center;
+        justify-content: center;
+
+        gap: 8px;
+
+        padding: 11px 18px;
+
+        border: 1px solid rgba(0, 217, 255, 0.28);
+
+        border-radius: 9px;
+
+        background: rgba(0, 217, 255, 0.055);
+
+        color: #00d9ff;
+
+        font-weight: bold;
+
+        font-size: 14px;
+
+        cursor: pointer;
+
+        transition: 0.3s ease;
+      }
+
+      .compare-btn:hover {
+        border-color: #00d9ff;
+
+        background: rgba(0, 217, 255, 0.1);
+
+        transform: translateY(-2px);
+
+        box-shadow: 0 8px 22px rgba(0, 217, 255, 0.12);
+      }
+
+      .compare-btn.active {
+        color: #00140b;
+
+        background: linear-gradient(135deg, #00e5a0, #00d9a0);
+
+        border-color: #00e5a0;
+      }
+
+      /* =========================
+   SYSTEM PANEL
+========================= */
+
+      .right-column {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 20px;
+      }
+
+      .panel {
+        background: linear-gradient(
+          145deg,
+          rgba(4, 25, 40, 0.78),
+          rgba(2, 17, 29, 0.7)
+        );
+
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+
+        border: 1px solid rgba(0, 229, 160, 0.16);
+
+        border-radius: 20px;
+
+        padding: 18px 20px;
+
+        box-shadow: 0 22px 65px rgba(0, 0, 0, 0.28);
+      }
+
+      .panel-header {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        margin-bottom: 12px;
+      }
+
+      .panel h3 {
+        color: #00e5a0;
+
+        margin: 0;
+
+        font-size: 20px;
+      }
+
+      .online-dot {
+        display: flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        font-size: 12px;
+
+        color: #19d37b;
+
+        letter-spacing: 0.5px;
+      }
+
+      .online-dot::before {
+        content: "";
+
+        width: 7px;
+        height: 7px;
+
+        border-radius: 50%;
+
+        background: #19d37b;
+
+        box-shadow: 0 0 10px rgba(25, 211, 123, 0.65);
+      }
+
+      .status {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 15px;
+
+        padding: 9px 0;
+
+        border-bottom: 1px solid rgba(16, 45, 61, 0.8);
+
+        font-size: 14px;
+      }
+
+      .status:last-child {
+        border-bottom: none;
+      }
+
+      .label {
+        color: #829aa8;
+      }
+
+      .value {
+        color: #fff;
+
+        font-weight: bold;
+
+        text-align: right;
+      }
+
+      .ready {
+        color: #19d37b;
+      }
+
+      /* =========================
+   INFO CARDS
+========================= */
+
+      .info {
+        display: grid;
+
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+
+        margin-top: 0;
+      }
+
+      .info-card {
+        background: linear-gradient(
+          145deg,
+          rgba(4, 25, 40, 0.76),
+          rgba(2, 17, 29, 0.68)
+        );
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+
+        border: 1px solid rgba(0, 229, 160, 0.13);
+
+        border-radius: 17px;
+
+        padding: 22px;
+
+        position: relative;
+
+        overflow: hidden;
+
+        transition: 0.3s ease;
+      }
+
+      .info-card::after {
+        content: "";
+
+        position: absolute;
+
+        width: 90px;
+        height: 90px;
+
+        border-radius: 50%;
+
+        background: radial-gradient(
+          circle,
+          rgba(0, 229, 160, 0.07),
+          transparent 70%
+        );
+
+        right: -35px;
+        bottom: -35px;
+
+        pointer-events: none;
+      }
+
+      .info-card:hover {
+        transform: translateY(-3px);
+
+        border-color: rgba(0, 229, 160, 0.36);
+
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .info-card h4 {
+        color: #8aa5b3;
+
+        margin-bottom: 10px;
+
+        font-size: 14px;
+
+        font-weight: normal;
+      }
+
+      .info-card strong {
+        font-size: 25px;
+
+        color: #00e5a0;
+      }
+
+      .info-vertical {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        width: 100%;
+        margin-top: 25px;
+      }
+
+      .info-vertical .info-card {
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* =========================
+   GPS LOCATION
+========================= */
+
+      .gps-panel {
+        width: 100%;
+        margin-top: 25px;
+        padding: 25px;
+        min-height: 220px;
+        box-sizing: border-box;
+      }
+
+      .gps-content-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 11px;
+        align-items: stretch;
+      }
+
+      .gps-content-row .status {
+        min-width: 0;
+        border-bottom: none;
+        padding: 10px 13px;
+        background: rgba(2, 17, 29, 0.42);
+        border: 1px solid rgba(0, 229, 160, 0.09);
+        border-radius: 10px;
+      }
+
+      .gps-content-row #getGpsBtn {
+        width: 100%;
+        min-height: 42px;
+      }
+
+      @media (max-width: 700px) {
+        .gps-content-row {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 430px) {
+        .gps-content-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* =========================
+   TARGET MEASUREMENT
+========================= */
+
+      #targetMeasurement {
+        display: none;
+
+        width: 100%;
+
+        margin-top: 25px;
+
+        padding: 22px;
+
+        background: linear-gradient(
+          145deg,
+          rgba(4, 25, 40, 0.76),
+          rgba(2, 17, 29, 0.68)
+        );
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+
+        border: 1px solid rgba(0, 229, 160, 0.17);
+
+        border-radius: 17px;
+
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+
+        box-sizing: border-box;
+      }
+
+      #targetMeasurement h3 {
+        color: #00e5a0;
+
+        margin-bottom: 15px;
+
+        font-size: 18px;
+      }
+
+      #targetMeasurementList {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+
+        width: 100%;
+      }
+
+      .target-measurement-item {
+        padding: 14px 15px;
+
+        background: rgba(2, 17, 29, 0.48);
+
+        border: 1px solid rgba(0, 229, 160, 0.09);
+
+        border-radius: 10px;
+
+        min-width: 0;
+      }
+
+      .target-measurement-name {
+        color: #fff;
+
+        font-weight: bold;
+
+        margin-bottom: 10px;
+      }
+
+      .target-measurement-row {
+        display: flex;
+
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 4px 0;
+
+        color: #8199a7;
+
+        font-size: 13px;
+      }
+
+      .target-measurement-row strong {
+        color: #19d37b;
+
+        text-align: right;
+      }
+
+      .target-measurement-note {
+        margin-top: 12px;
+
+        color: #8199a7;
+
+        font-size: 12px;
+
+        line-height: 1.6;
+      }
+
+      @media (max-width: 700px) {
+        #targetMeasurementList {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* =========================
+   DETECTION RESULT
+========================= */
+
+      #detectionResult {
+        display: none;
+
+        width: 100%;
+
+        margin-top: 25px;
+
+        padding: 22px;
+
+        background: linear-gradient(
+          145deg,
+          rgba(4, 25, 40, 0.76),
+          rgba(2, 17, 29, 0.68)
+        );
+
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+
+        border: 1px solid rgba(0, 229, 160, 0.17);
+
+        border-radius: 17px;
+
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+
+        flex-shrink: 0;
+
+        height: auto;
+      }
+
+      #detectionResult h3 {
+        color: #00e5a0;
+
+        margin-bottom: 15px;
+
+        font-size: 18px;
+      }
+
+      #objectList {
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
+
+        width: 100%;
+
+        height: auto;
+      }
+
+      .detected-item {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 15px;
+
+        padding: 13px 15px;
+
+        background: rgba(2, 17, 29, 0.48);
+
+        border: 1px solid rgba(0, 229, 160, 0.09);
+
+        border-radius: 10px;
+
+        font-size: 15px;
+
+        min-width: 0;
+      }
+
+      .detected-name {
+        color: #fff;
+
+        font-weight: bold;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+        white-space: nowrap;
+
+        order: 2;
+
+        text-align: right;
+
+        margin-left: auto;
+      }
+
+      .detected-confidence {
+        color: #19d37b;
+
+        font-weight: bold;
+
+        flex-shrink: 0;
+
+        order: 1;
+
+        text-align: left;
+      }
+
+      .empty-detection {
+        grid-column: 1 / -1;
+
+        color: #8199a7;
+
+        padding: 8px 0;
+
+        font-size: 14px;
+      }
+
+      /* =========================
+   COMPARISON POPUP
+========================= */
+
+      #comparisonPopup {
+        display: none;
+
+        position: fixed;
+
+        inset: 0;
+
+        background: rgba(0, 5, 12, 0.92);
+
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+
+        align-items: center;
+        justify-content: center;
+
+        z-index: 6000;
+
+        padding: 25px;
+      }
+
+      .comparison-popup-box {
+        width: min(1250px, 96vw);
+
+        height: min(88vh, 850px);
+
+        background: linear-gradient(
+          145deg,
+          rgba(4, 25, 40, 0.96),
+          rgba(2, 17, 29, 0.96)
+        );
+
+        border: 1px solid rgba(0, 229, 160, 0.18);
+
+        border-radius: 18px;
+
+        box-shadow:
+          0 25px 80px rgba(0, 0, 0, 0.55),
+          0 0 35px rgba(0, 229, 160, 0.05);
+
+        display: flex;
+
+        flex-direction: column;
+
+        overflow: hidden;
+
+        position: relative;
+      }
+
+      .comparison-popup-header {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        padding: 16px 20px;
+
+        border-bottom: 1px solid rgba(0, 229, 160, 0.13);
+
+        flex-shrink: 0;
+      }
+
+      .comparison-popup-title {
+        color: #00e5a0;
+
+        font-size: 19px;
+
+        font-weight: bold;
+      }
+
+      .comparison-popup-controls {
+        display: flex;
+
+        align-items: center;
+
+        justify-content: flex-end;
+
+        gap: 7px;
+
+        flex-wrap: wrap;
+      }
+
+      .close-comparison {
+        height: 34px;
+
+        min-width: 34px;
+
+        border: 1px solid rgba(255, 255, 255, 0.14);
+
+        border-radius: 7px;
+
+        background: rgba(0, 217, 255, 0.055);
+
+        color: #fff;
+
+        cursor: pointer;
+
+        font-weight: bold;
+
+        font-size: 22px;
+
+        line-height: 1;
+
+        transition: 0.25s ease;
+      }
+
+      .close-comparison:hover {
+        color: #00e5a0;
+
+        border-color: #00e5a0;
+      }
+
+      .fullscreen-btn {
+        height: 34px;
+
+        min-width: 34px;
+
+        padding: 0 10px;
+
+        border: 1px solid rgba(0, 217, 255, 0.24);
+
+        border-radius: 7px;
+
+        background: rgba(0, 217, 255, 0.055);
+
+        color: #00d9ff;
+
+        cursor: pointer;
+
+        font-weight: bold;
+
+        transition: 0.25s ease;
+      }
+
+      .fullscreen-btn:hover {
+        border-color: #00e5a0;
+
+        color: #00e5a0;
+
+        background: rgba(0, 229, 160, 0.08);
+      }
+
+      .comparison-popup-content {
+        flex: 1;
+
+        min-height: 0;
+
+        display: grid;
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 16px;
+
+        padding: 16px;
+
+        overflow: hidden;
+      }
+
+      .comparison-popup-panel {
+        min-width: 0;
+
+        min-height: 0;
+
+        background: rgba(1, 12, 21, 0.7);
+
+        border: 1px solid rgba(0, 229, 160, 0.14);
+
+        border-radius: 12px;
+
+        padding: 10px;
+
+        display: flex;
+
+        flex-direction: column;
+
+        overflow: hidden;
+      }
+
+      .comparison-popup-panel-header {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 8px;
+
+        margin-bottom: 10px;
+
+        flex-shrink: 0;
+      }
+
+      .comparison-popup-panel-title {
+        color: #00e5a0;
+
+        font-size: 13px;
+
+        font-weight: bold;
+      }
+
+      .image-zoom-controls {
+        display: flex;
+
+        align-items: center;
+
+        gap: 5px;
+
+        flex-wrap: wrap;
+
+        justify-content: flex-end;
+      }
+
+      .image-zoom-btn,
+      .image-zoom-reset {
+        height: 30px;
+
+        min-width: 30px;
+
+        padding: 0 8px;
+
+        border: 1px solid rgba(0, 217, 255, 0.24);
+
+        border-radius: 6px;
+
+        background: rgba(0, 217, 255, 0.055);
+
+        color: #00d9ff;
+
+        cursor: pointer;
+
+        font-weight: bold;
+
+        transition: 0.25s ease;
+      }
+
+      .image-zoom-btn:hover,
+      .image-zoom-reset:hover {
+        border-color: #00e5a0;
+
+        color: #00e5a0;
+
+        background: rgba(0, 229, 160, 0.08);
+      }
+
+      .image-zoom-percentage {
+        width: 60px;
+
+        height: 30px;
+
+        border: 1px solid rgba(0, 229, 160, 0.24);
+
+        border-radius: 6px;
+
+        background: rgba(0, 10, 18, 0.7);
+
+        color: #fff;
+
+        text-align: center;
+
+        font-weight: bold;
+
+        outline: none;
+      }
+
+      .image-zoom-percentage:focus {
+        border-color: #00e5a0;
+
+        box-shadow: 0 0 12px rgba(0, 229, 160, 0.08);
+      }
+
+      .comparison-image-area {
+        flex: 1;
+
+        min-height: 0;
+
+        overflow: auto;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 9px;
+
+        background: rgba(0, 0, 0, 0.2);
+
+        padding: 10px;
+      }
+
+      .comparison-image-stage {
+        position: relative;
+
+        display: block;
+
+        flex-shrink: 0;
+
+        transform-origin: center center;
+
+        transition:
+          width 0.15s ease,
+          height 0.15s ease;
+      }
+
+      .comparison-image-stage img {
+        display: block;
+
+        width: 100%;
+
+        height: 100%;
+
+        object-fit: fill;
+
+        border-radius: 7px;
+      }
+
+      .comparison-image-stage canvas {
+        position: absolute;
+
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+
+        pointer-events: none;
+
+        border-radius: 7px;
+      }
+
+      /* =========================
+   GALLERY
+========================= */
+
+      .gallery-section {
+        margin-top: 40px;
+
+        padding: 25px;
+
+        background: linear-gradient(
+          145deg,
+          rgba(0, 30, 40, 0.72),
+          rgba(2, 18, 30, 0.68)
+        );
+
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+
+        border: 1px solid rgba(25, 211, 123, 0.2);
+
+        border-radius: 20px;
+
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.24);
+      }
+
+      .gallery-header {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 15px;
+
+        margin-bottom: 20px;
+      }
+
+      .gallery-section h2 {
+        margin: 0;
+
+        color: #00e5a0;
+
+        font-size: 19px;
+      }
+
+      .gallery-subtitle {
+        color: #718a97;
+
+        font-size: 13px;
+      }
+
+      .gallery-grid {
+        display: grid;
+
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+
+        gap: 18px;
+      }
+
+      .gallery-card {
+        background: rgba(4, 22, 36, 0.78);
+
+        border: 1px solid rgba(0, 229, 160, 0.11);
+
+        border-radius: 13px;
+
+        padding: 9px;
+
+        overflow: hidden;
+
+        cursor: pointer;
+
+        transition: 0.3s ease;
+      }
+
+      .gallery-card:hover {
+        border-color: #19d37b;
+
+        transform: translateY(-4px);
+
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+      }
+
+      .gallery-image-wrap {
+        position: relative;
+
+        overflow: hidden;
+
+        border-radius: 9px;
+      }
+
+      .gallery-card img {
+        width: 100%;
+        height: 150px;
+
+        object-fit: cover;
+
+        border-radius: 9px;
+
+        display: block;
+
+        transition: 0.35s ease;
+      }
+
+      .gallery-card:hover img {
+        transform: scale(1.035);
+      }
+
+      .gallery-overlay {
+        position: absolute;
+
+        inset: 0;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(0, 10, 18, 0.48);
+
+        opacity: 0;
+
+        transition: 0.3s ease;
+
+        color: #00e5a0;
+
+        font-size: 14px;
+
+        font-weight: bold;
+      }
+
+      .gallery-card:hover .gallery-overlay {
+        opacity: 1;
+      }
+
+      .gallery-name {
+        color: #9fb8c5;
+
+        font-size: 13px;
+
+        margin-top: 9px;
+
+        padding: 0 2px;
+
+        word-break: break-all;
+
+        line-height: 1.4;
+      }
+
+      /* =========================
+   GALLERY RENAME
+========================= */
+
+      .gallery-name-row {
+        display: flex;
+
+        align-items: center;
+
+        gap: 6px;
+
+        margin-top: 9px;
+
+        position: relative;
+
+        padding-right: 28px;
+      }
+
+      .gallery-name-row .gallery-name {
+        flex: 1;
+
+        margin-top: 0;
+
+        min-width: 0;
+      }
+
+      .rename-btn {
+        position: absolute;
+
+        right: 0;
+        bottom: 0;
+
+        width: 24px;
+        height: 22px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border: 1px solid rgba(0, 229, 160, 0.13);
+
+        background: rgba(0, 229, 160, 0.035);
+
+        color: #00e5a0;
+
+        border-radius: 6px;
+
+        padding: 2px;
+
+        font-size: 10px;
+
+        cursor: pointer;
+
+        flex-shrink: 0;
+
+        opacity: 0.72;
+
+        transition: 0.25s ease;
+      }
+
+      .rename-btn:hover {
+        border-color: #00e5a0;
+
+        background: rgba(0, 229, 160, 0.1);
+
+        opacity: 1;
+
+        transform: translateY(-1px);
+      }
+
+      .gallery-message {
+        color: #8199a7;
+
+        font-size: 14px;
+
+        padding: 15px 0;
+      }
+
+      /* =========================
+   LOGO POPUP
+========================= */
+
+      #logoPopup {
+        display: none;
+
+        position: fixed;
+
+        inset: 0;
+
+        background: rgba(0, 5, 12, 0.88);
+
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+
+        align-items: center;
+        justify-content: center;
+
+        z-index: 5000;
+      }
+
+      .logo-popup-box {
+        position: relative;
+
+        background: transparent;
+
+        border: none;
+
+        padding: 0;
+
+        box-shadow: none;
+      }
+
+      .logo-popup-box img {
+        width: min(520px, 90vw);
+
+        height: auto;
+
+        max-height: 85vh;
+
+        object-fit: contain;
+
+        border-radius: 50%;
+
+        box-shadow:
+          0 0 30px rgba(0, 217, 255, 0.35),
+          0 0 70px rgba(0, 229, 160, 0.18);
+      }
+
+      .close-popup {
+        position: fixed;
+
+        top: 25px;
+        right: 35px;
+
+        background: transparent;
+
+        border: none;
+
+        font-size: 42px;
+
+        color: #fff;
+
+        cursor: pointer;
+
+        line-height: 1;
+
+        z-index: 10001;
+      }
+
+      .close-popup:hover {
+        color: #00e5a0;
+      }
+
+      /* =========================
+   SCROLLBAR
+========================= */
+
+      ::-webkit-scrollbar {
+        width: 7px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #020b13;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #164352;
+
+        border-radius: 10px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #00a982;
+      }
+
+      /* =========================
+   RESPONSIVE
+========================= */
+
+      @media (max-width: 1000px) {
+        .dashboard {
+          grid-template-columns: 1fr;
+        }
+
+        .panel {
+          min-height: auto;
+        }
+      }
+
+      @media (max-width: 700px) {
+        nav {
+          padding: 0 5%;
+        }
+
+        .brand-text {
+          font-size: 17px;
+          letter-spacing: 2px;
+        }
+
+        .home-link {
+          font-size: 14px;
+          margin-right: 0;
+        }
+
+        .nav-right {
+          gap: 8px;
+        }
+
+        .container {
+          padding: 40px 5% 55px;
+        }
+
+        .heading h1 {
+          font-size: 28px;
+        }
+
+        .upload-box {
+          min-height: 430px;
+
+          padding: 25px 18px;
+        }
+
+        .preview-action-row {
+          flex-direction: column;
+
+          gap: 15px;
+        }
+
+        .image-container {
+          max-width: 100%;
+        }
+
+        .action-buttons {
+          width: 100%;
+
+          max-width: 220px;
+        }
+
+        #objectList {
+          grid-template-columns: 1fr;
+        }
+
+        .comparison-popup-box {
+          width: 96vw;
+
+          height: 92vh;
+        }
+
+        .comparison-popup-header {
+          align-items: flex-start;
+
+          flex-direction: column;
+        }
+
+        .comparison-popup-controls {
+          width: 100%;
+
+          justify-content: flex-start;
+        }
+
+        .comparison-popup-content {
+          grid-template-columns: 1fr;
+        }
+
+        .comparison-popup-panel-header {
+          align-items: flex-start;
+
+          flex-direction: column;
+        }
+
+        .image-zoom-controls {
+          width: 100%;
+
+          justify-content: flex-start;
+        }
+
+        .info {
+          grid-template-columns: 1fr;
+        }
+
+        .gallery-header {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .gallery-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+
+          gap: 12px;
+        }
+
+        .gallery-card img {
+          height: 125px;
+        }
+      }
+
+      @media (max-width: 430px) {
+        .brand img {
+          width: 35px;
+          height: 35px;
+        }
+
+        .brand-text {
+          font-size: 15px;
+        }
+
+        .home-link {
+          display: none;
+        }
+
+        .menu-panel {
+          width: 100%;
+          right: -100%;
+        }
+
+        .heading h1 {
+          font-size: 25px;
+        }
+
+        .upload-content h2 {
+          font-size: 21px;
+        }
+
+        .gallery-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .image-zoom-controls {
+          gap: 4px;
+        }
+
+        .image-zoom-percentage {
+          width: 55px;
+        }
+      }
+
+      /* =========================
+   FULLSCREEN
+========================= */
+
+      #comparisonPopupBox:fullscreen {
+        width: 100vw;
+
+        height: 100vh;
+
+        max-width: none;
+
+        max-height: none;
+
+        border-radius: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- =========================
+     NAVBAR
+========================= -->
+
+    <nav>
+      <div class="brand" onclick="openLogoPopup(event)">
+        <img src="Logo.png" alt="AQUASCAN AI Logo" />
+
+        <div class="brand-text">AQUASCAN <span>AI</span></div>
+      </div>
+
+      <div class="nav-right">
+        <a href="index.html" class="home-link"> Home </a>
+
+        <button
+          type="button"
+          class="menu-btn"
+          id="menuBtn"
+          aria-label="Open menu"
+          aria-expanded="false"
+          onclick="toggleMenu()"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- =========================
+     SIDE MENU
+========================= -->
+
+    <div class="menu-panel" id="menuPanel">
+      <div class="menu-title">AQUASCAN AI</div>
+
+      <a href="dashboard.html"> 📡 Dashboard </a>
+
+      <a href="reports.html"> 📊 Detection Reports </a>
+
+      <a href="features.html"> 🌊 Features </a>
+
+      <a href="features.html#how"> ⚙ How It Works </a>
+
+      <a href="index.html#mission"> 🎯 Mission </a>
+
+      <a href="index.html#project-core"> 🧠 Project Core </a>
+
+      <a href="index.html#development"> 🚀 Development Focus </a>
+
+      <a href="index.html#future"> 🔭 Future Scope </a>
+
+      <a href="developer.html"> 👨‍💻 Developer </a>
+    </div>
+
+    <!-- =========================
+     MAIN
+========================= -->
+
+    <div class="container">
+      <!-- HEADING -->
+
+      <div class="heading">
+        <h1>
+          Sonar
+          <span>Detection Dashboard</span>
+        </h1>
+
+        <p>
+          Upload Side-Scan Sonar imagery for AI-powered underwater analysis.
+        </p>
+      </div>
+
+      <!-- DASHBOARD -->
+
+      <div class="dashboard">
+        <!-- LEFT COLUMN -->
+
+        <div class="left-column">
+          <!-- UPLOAD -->
+
+          <div class="upload-box" id="uploadBox">
+            <div class="upload-content">
+              <div class="upload-icon">🛰️</div>
+
+              <h2>Upload Sonar Image</h2>
+
+              <p>Select a Side-Scan Sonar image to begin analysis.</p>
+
+              <label for="sonarFile" class="upload-btn">
+                📁 Choose Sonar Image
+              </label>
+
+              <input type="file" id="sonarFile" accept="image/*" />
+
+              <div id="fileName"></div>
+
+              <!-- IMAGE + ACTIONS -->
+
+              <div class="preview-action-row">
+                <div class="image-container" id="imageContainer">
+                  <img id="preview" alt="Sonar Preview" />
+
+                  <canvas id="boxCanvas"></canvas>
+                </div>
+
+                <div class="action-buttons">
+                  <button type="button" class="detect-btn" id="detectBtn">
+                    🔍 Start AI Detection
+                  </button>
+
+                  <button type="button" class="compare-btn" id="compareBtn">
+                    🔀 Comparison
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- INITIAL DETECTION -->
+
+          <div id="initialDetectionResult">
+            <h3>🎯 Detected Objects</h3>
+
+            <div id="initialObjectList">
+              <div class="empty-detection">
+                📷 Upload a sonar image to begin detection.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+
+        <div class="right-column">
+          <!-- SYSTEM STATUS -->
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>System Status</h3>
+
+              <div class="online-dot">SYSTEM READY</div>
+            </div>
+
+            <div class="status">
+              <span class="label"> AI Engine </span>
+
+              <span class="value ready"> ● Ready </span>
+            </div>
+
+            <div class="status">
+              <span class="label"> Sonar Input </span>
+
+              <span class="value" id="inputStatus"> Waiting </span>
+            </div>
+
+            <div class="status">
+              <span class="label"> Detection </span>
+
+              <span class="value" id="detectionStatus"> Standby </span>
+            </div>
+
+            <div class="status">
+              <span class="label"> Model </span>
+
+              <span class="value"> AQUASCAN AI </span>
+            </div>
+
+            <div class="status">
+              <span class="label"> Mode </span>
+
+              <span class="value"> Image Analysis </span>
+            </div>
+          </div>
+
+          <!-- GPS LOCATION -->
+
+          <div class="panel gps-panel">
+            <div class="panel-header">
+              <h3>📍 GPS Location</h3>
+              <div class="online-dot">LOCATION</div>
+            </div>
+
+            <div class="gps-content-row">
+              <div class="status">
+                <span class="label">GPS Status</span>
+                <span class="value" id="gpsStatus">Not Available</span>
+              </div>
+
+              <div class="status">
+                <span class="label">Latitude</span>
+                <span class="value" id="gpsLatitude">--</span>
+              </div>
+
+              <div class="status">
+                <span class="label">Longitude</span>
+                <span class="value" id="gpsLongitude">--</span>
+              </div>
+
+              <button
+                type="button"
+                id="getGpsBtn"
+                style="
+                  width: 100%;
+                  margin-top: 14px;
+                  padding: 11px 14px;
+                  border: 1px solid rgba(0, 229, 160, 0.28);
+                  border-radius: 9px;
+                  background: rgba(0, 229, 160, 0.055);
+                  color: #00e5a0;
+                  font-weight: bold;
+                  cursor: pointer;
+                "
+              >
+                📍 Get GPS Location
+              </button>
+
+              <button
+                type="button"
+                id="viewGpsMapBtn"
+                disabled
+                onclick="viewGPSMap()"
+                style="
+                  width: 100%;
+                  margin-top: 10px;
+                  padding: 11px 14px;
+                  border: 1px solid rgba(0, 217, 255, 0.28);
+                  border-radius: 9px;
+                  background: rgba(0, 217, 255, 0.055);
+                  color: #00d9ff;
+                  font-weight: bold;
+                  cursor: not-allowed;
+                "
+              >
+                🗺️ Map View
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO CARDS -->
+
+      <div class="info info-vertical">
+        <div class="info-card">
+          <h4>Objects Detected</h4>
+          <strong id="objects"> -- </strong>
+        </div>
+
+        <div class="info-card">
+          <h4>Analysis Status</h4>
+          <strong id="analysis"> Waiting </strong>
+        </div>
+
+        <div class="info-card">
+          <h4>Confidence</h4>
+          <strong id="confidence"> -- </strong>
+        </div>
+      </div>
+
+      <!-- DETECTION RESULT -->
+
+      <div id="detectionResult">
+        <h3>🎯 Detected Objects</h3>
+
+        <div id="objectList">
+          <div class="empty-detection">
+            📷 Upload a sonar image to begin detection.
+          </div>
+        </div>
+      </div>
+
+      <!-- TARGET MEASUREMENT -->
+
+      <div id="targetMeasurement">
+        <h3>📐 Target Measurement</h3>
+
+        <div id="targetMeasurementList"></div>
+
+        <div class="target-measurement-note">
+          Measurement is based on the AI bounding box in image pixels. Physical
+          sonar scale/range information is not available in the current sonar
+          image, so real-world metres/cm are not estimated.
+        </div>
+      </div>
+
+      <!-- GALLERY -->
+
+      <section class="gallery-section">
+        <div class="gallery-header">
+          <div>
+            <h2>📸 Uploaded Sonar Images</h2>
+          </div>
+
+          <span class="gallery-subtitle"> Select an image to analyze </span>
+        </div>
+
+        <div id="gallery" class="gallery-grid"></div>
+      </section>
+    </div>
+
+    <!-- =========================
+     COMPARISON POPUP
+========================= -->
+
+    <div id="comparisonPopup" onclick="closeComparisonPopup(event)">
+      <div
+        class="comparison-popup-box"
+        id="comparisonPopupBox"
+        onclick="event.stopPropagation()"
+      >
+        <div class="comparison-popup-header">
+          <div class="comparison-popup-title">🔀 Sonar Image Comparison</div>
+
+          <div class="comparison-popup-controls">
+            <button
+              type="button"
+              class="fullscreen-btn"
+              id="fullscreenBtn"
+              title="Full Screen"
+            >
+              ⛶ Full Screen
+            </button>
+
+            <button
+              type="button"
+              class="close-comparison"
+              onclick="closeComparisonPopup()"
+              title="Close"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+
+        <div class="comparison-popup-content">
+          <div class="comparison-popup-panel">
+            <div class="comparison-popup-panel-header">
+              <div class="comparison-popup-panel-title">Original Image</div>
+
+              <div class="image-zoom-controls">
+                <button
+                  type="button"
+                  class="image-zoom-btn"
+                  id="originalZoomOutBtn"
+                  title="Zoom Out"
+                >
+                  −
+                </button>
+
+                <input
+                  type="number"
+                  id="originalZoomPercentage"
+                  class="image-zoom-percentage"
+                  min="25"
+                  max="500"
+                  step="5"
+                  value="100"
+                  aria-label="Original image zoom percentage"
+                />
+
+                <span>%</span>
+
+                <button
+                  type="button"
+                  class="image-zoom-btn"
+                  id="originalZoomInBtn"
+                  title="Zoom In"
+                >
+                  +
+                </button>
+
+                <button
+                  type="button"
+                  class="image-zoom-reset"
+                  id="originalZoomResetBtn"
+                  title="Fit to Screen"
+                >
+                  ↺ Fit
+                </button>
+              </div>
+            </div>
+
+            <div class="comparison-image-area" id="originalComparisonArea">
+              <div class="comparison-image-stage" id="originalComparisonStage">
+                <img id="originalCompareImage" alt="Original Uploaded Image" />
+              </div>
+            </div>
+          </div>
+
+          <div class="comparison-popup-panel">
+            <div class="comparison-popup-panel-header">
+              <div class="comparison-popup-panel-title">Sonar AI Detection</div>
+
+              <div class="image-zoom-controls">
+                <button
+                  type="button"
+                  class="image-zoom-btn"
+                  id="sonarZoomOutBtn"
+                  title="Zoom Out"
+                >
+                  −
+                </button>
+
+                <input
+                  type="number"
+                  id="sonarZoomPercentage"
+                  class="image-zoom-percentage"
+                  min="25"
+                  max="500"
+                  step="5"
+                  value="100"
+                  aria-label="Sonar image zoom percentage"
+                />
+
+                <span>%</span>
+
+                <button
+                  type="button"
+                  class="image-zoom-btn"
+                  id="sonarZoomInBtn"
+                  title="Zoom In"
+                >
+                  +
+                </button>
+
+                <button
+                  type="button"
+                  class="image-zoom-reset"
+                  id="sonarZoomResetBtn"
+                  title="Fit to Screen"
+                >
+                  ↺ Fit
+                </button>
+              </div>
+            </div>
+
+            <div class="comparison-image-area" id="sonarComparisonArea">
+              <div class="comparison-image-stage" id="sonarComparisonStage">
+                <img id="sonarCompareImage" alt="Sonar AI Detection" />
+
+                <canvas id="compareCanvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================
+     LOGO POPUP
+========================= -->
+
+    <div id="logoPopup" onclick="closeLogoPopup(event)">
+      <div class="logo-popup-box" onclick="event.stopPropagation()">
+        <button
+          type="button"
+          class="close-popup"
+          aria-label="Close logo"
+          onclick="closeLogoPopup()"
+        >
+          ×
+        </button>
+
+        <img src="Logo.png" alt="AQUASCAN AI Logo" />
+      </div>
+    </div>
+
+    <script>
+      /* =========================
+   MENU
+========================= */
+
+      function toggleMenu() {
+        const menu = document.getElementById("menuPanel");
+        const button = document.getElementById("menuBtn");
+        const isActive = menu.classList.toggle("active");
+
+        button.classList.toggle("active", isActive);
+        button.setAttribute("aria-expanded", String(isActive));
+      }
+
+      document.addEventListener("click", function (event) {
+        const menu = document.getElementById("menuPanel");
+        const button = document.getElementById("menuBtn");
+
+        if (!menu.contains(event.target) && !button.contains(event.target)) {
+          menu.classList.remove("active");
+          button.classList.remove("active");
+          button.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      /* =========================
+   LOGO POPUP
+========================= */
+
+      function openLogoPopup() {
+        document.getElementById("logoPopup").style.display = "flex";
+      }
+
+      function closeLogoPopup(event) {
+        const popup = document.getElementById("logoPopup");
+
+        if (event && event.target !== popup) {
+          return;
+        }
+
+        popup.style.display = "none";
+      }
+
+      /* =========================
+   DASHBOARD ELEMENTS
+========================= */
+
+      const fileInput = document.getElementById("sonarFile");
+      const preview = document.getElementById("preview");
+      const imageContainer = document.getElementById("imageContainer");
+      const canvas = document.getElementById("boxCanvas");
+      const ctx = canvas.getContext("2d");
+      const fileName = document.getElementById("fileName");
+      const detectBtn = document.getElementById("detectBtn");
+      const compareBtn = document.getElementById("compareBtn");
+
+      const originalCompareImage = document.getElementById(
+        "originalCompareImage",
+      );
+
+      const sonarCompareImage = document.getElementById("sonarCompareImage");
+
+      const compareCanvas = document.getElementById("compareCanvas");
+      const compareCtx = compareCanvas.getContext("2d");
+
+      const inputStatus = document.getElementById("inputStatus");
+      const detectionStatus = document.getElementById("detectionStatus");
+      const objects = document.getElementById("objects");
+      const confidence = document.getElementById("confidence");
+      const analysis = document.getElementById("analysis");
+
+      let detectionResult = document.getElementById("detectionResult");
+      let objectList = document.getElementById("objectList");
+
+      const gallery = document.getElementById("gallery");
+
+      const gpsStatus = document.getElementById("gpsStatus");
+      const gpsLatitude = document.getElementById("gpsLatitude");
+      const gpsLongitude = document.getElementById("gpsLongitude");
+      const getGpsBtn = document.getElementById("getGpsBtn");
+      const viewGpsMapBtn = document.getElementById("viewGpsMapBtn");
+
+      let currentGPS = {
+        latitude: null,
+        longitude: null,
+      };
+
+      const uploadBox = document.getElementById("uploadBox");
+      const comparisonPopup = document.getElementById("comparisonPopup");
+      const comparisonPopupBox = document.getElementById("comparisonPopupBox");
+
+      const originalComparisonStage = document.getElementById(
+        "originalComparisonStage",
+      );
+
+      const sonarComparisonStage = document.getElementById(
+        "sonarComparisonStage",
+      );
+
+      const originalComparisonArea = document.getElementById(
+        "originalComparisonArea",
+      );
+
+      const sonarComparisonArea = document.getElementById(
+        "sonarComparisonArea",
+      );
+
+      const originalZoomPercentage = document.getElementById(
+        "originalZoomPercentage",
+      );
+
+      const sonarZoomPercentage = document.getElementById(
+        "sonarZoomPercentage",
+      );
+
+      const originalZoomOutBtn = document.getElementById("originalZoomOutBtn");
+
+      const originalZoomInBtn = document.getElementById("originalZoomInBtn");
+
+      const originalZoomResetBtn = document.getElementById(
+        "originalZoomResetBtn",
+      );
+
+      const sonarZoomOutBtn = document.getElementById("sonarZoomOutBtn");
+
+      const sonarZoomInBtn = document.getElementById("sonarZoomInBtn");
+
+      const sonarZoomResetBtn = document.getElementById("sonarZoomResetBtn");
+
+      const fullscreenBtn = document.getElementById("fullscreenBtn");
+
+      let selectedFile = null;
+      let lastDetections = [];
+
+      const targetMeasurement = document.getElementById("targetMeasurement");
+
+      const targetMeasurementList = document.getElementById(
+        "targetMeasurementList",
+      );
+      let comparisonActive = false;
+      let comparisonOriginalURL = null;
+
+      /* =========================
+   SEPARATE COMPARISON ZOOM
+========================= */
+
+      let originalZoom = 100;
+      let sonarZoom = 100;
+
+      let originalFitScale = 1;
+      let sonarFitScale = 1;
+
+      function calculateFitScale(imageElement, areaElement) {
+        if (!imageElement.naturalWidth || !imageElement.naturalHeight) {
+          return 1;
+        }
+
+        const areaWidth = Math.max(50, areaElement.clientWidth - 20);
+        const areaHeight = Math.max(50, areaElement.clientHeight - 20);
+
+        const widthScale = areaWidth / imageElement.naturalWidth;
+        const heightScale = areaHeight / imageElement.naturalHeight;
+
+        return Math.min(widthScale, heightScale);
+      }
+
+      function applyOriginalZoom() {
+        if (
+          !originalCompareImage.naturalWidth ||
+          !originalCompareImage.naturalHeight
+        ) {
+          return;
+        }
+
+        originalFitScale = calculateFitScale(
+          originalCompareImage,
+          originalComparisonArea,
+        );
+
+        const finalScale = originalFitScale * (originalZoom / 100);
+
+        const width = Math.max(
+          1,
+          Math.round(originalCompareImage.naturalWidth * finalScale),
+        );
+
+        const height = Math.max(
+          1,
+          Math.round(originalCompareImage.naturalHeight * finalScale),
+        );
+
+        originalComparisonStage.style.width = width + "px";
+        originalComparisonStage.style.height = height + "px";
+
+        originalZoomPercentage.value = Math.round(originalZoom);
+      }
+
+      function applySonarZoom() {
+        if (
+          !sonarCompareImage.naturalWidth ||
+          !sonarCompareImage.naturalHeight
+        ) {
+          return;
+        }
+
+        sonarFitScale = calculateFitScale(
+          sonarCompareImage,
+          sonarComparisonArea,
+        );
+
+        const finalScale = sonarFitScale * (sonarZoom / 100);
+
+        const width = Math.max(
+          1,
+          Math.round(sonarCompareImage.naturalWidth * finalScale),
+        );
+
+        const height = Math.max(
+          1,
+          Math.round(sonarCompareImage.naturalHeight * finalScale),
+        );
+
+        sonarComparisonStage.style.width = width + "px";
+        sonarComparisonStage.style.height = height + "px";
+
+        compareCanvas.style.width = width + "px";
+        compareCanvas.style.height = height + "px";
+
+        sonarZoomPercentage.value = Math.round(sonarZoom);
+      }
+
+      function setOriginalZoom(value) {
+        let zoom = Number(value);
+
+        if (!Number.isFinite(zoom)) {
+          zoom = 100;
+        }
+
+        zoom = Math.max(25, Math.min(500, zoom));
+
+        originalZoom = zoom;
+
+        applyOriginalZoom();
+      }
+
+      function setSonarZoom(value) {
+        let zoom = Number(value);
+
+        if (!Number.isFinite(zoom)) {
+          zoom = 100;
+        }
+
+        zoom = Math.max(25, Math.min(500, zoom));
+
+        sonarZoom = zoom;
+
+        applySonarZoom();
+      }
+
+      /* =========================
+   ORIGINAL ZOOM BUTTONS
+========================= */
+
+      originalZoomInBtn.addEventListener("click", function () {
+        setOriginalZoom(originalZoom + 10);
+      });
+
+      originalZoomOutBtn.addEventListener("click", function () {
+        setOriginalZoom(originalZoom - 10);
+      });
+
+      originalZoomResetBtn.addEventListener("click", function () {
+        originalZoom = 100;
+        applyOriginalZoom();
+      });
+
+      originalZoomPercentage.addEventListener("change", function () {
+        setOriginalZoom(this.value);
+      });
+
+      originalZoomPercentage.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          setOriginalZoom(this.value);
+        }
+      });
+
+      /* =========================
+   SONAR ZOOM BUTTONS
+========================= */
+
+      sonarZoomInBtn.addEventListener("click", function () {
+        setSonarZoom(sonarZoom + 10);
+      });
+
+      sonarZoomOutBtn.addEventListener("click", function () {
+        setSonarZoom(sonarZoom - 10);
+      });
+
+      sonarZoomResetBtn.addEventListener("click", function () {
+        sonarZoom = 100;
+        applySonarZoom();
+      });
+
+      sonarZoomPercentage.addEventListener("change", function () {
+        setSonarZoom(this.value);
+      });
+
+      sonarZoomPercentage.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          setSonarZoom(this.value);
+        }
+      });
+
+      /* =========================
+   GALLERY NAME STORAGE
+========================= */
+
+      function getGalleryNames() {
+        return JSON.parse(localStorage.getItem("aquascanGalleryNames") || "{}");
+      }
+
+      function saveGalleryNames(names) {
+        localStorage.setItem("aquascanGalleryNames", JSON.stringify(names));
+      }
+
+      function getDisplayName(file) {
+        const names = getGalleryNames();
+        return names[file] || file;
+      }
+
+      /* =========================
+   UPDATE REPORT NAME
+========================= */
+
+      function updateReportImageName(originalName, newName) {
+        const reports = JSON.parse(
+          localStorage.getItem("aquascanReports") || "[]",
+        );
+
+        let changed = false;
+
+        reports.forEach(function (report) {
+          if (report.image === originalName) {
+            report.image = newName;
+            changed = true;
+          }
+        });
+
+        if (changed) {
+          localStorage.setItem("aquascanReports", JSON.stringify(reports));
+        }
+      }
+
+      /* =========================
+   RENAME GALLERY IMAGE
+========================= */
+
+      function renameGalleryImage(originalName) {
+        const currentName = getDisplayName(originalName);
+
+        const newName = prompt("Enter new image name:", currentName);
+
+        if (newName === null) {
+          return;
+        }
+
+        const trimmedName = newName.trim();
+
+        if (!trimmedName) {
+          alert("Image name cannot be empty.");
+          return;
+        }
+
+        const names = getGalleryNames();
+
+        names[originalName] = trimmedName;
+
+        saveGalleryNames(names);
+
+        updateReportImageName(currentName, trimmedName);
+        updateReportImageName(originalName, trimmedName);
+
+        if (selectedFile && selectedFile.name === originalName) {
+          fileName.textContent = "Selected: " + trimmedName;
+        }
+
+        loadGallery();
+      }
+
+      /* =========================
+   CREATE INITIAL DETECTION BLOCK
+========================= */
+
+      function createInitialDetectionBlock() {
+        const leftColumn = document.querySelector(".left-column");
+        const uploadBox = document.getElementById("uploadBox");
+
+        if (!leftColumn || !uploadBox) {
+          return;
+        }
+
+        if (document.getElementById("initialDetectionResult")) {
+          return;
+        }
+
+        const block = document.createElement("div");
+
+        block.id = "initialDetectionResult";
+
+        block.innerHTML = `
+          <h3>
+            🎯 Detected Objects
+          </h3>
+
+          <div id="initialObjectList">
+
+            <div class="empty-detection">
+              📷 Upload a sonar image to begin detection.
+            </div>
+
+          </div>
+        `;
+
+        leftColumn.insertBefore(block, uploadBox.nextSibling);
+      }
+
+      /* =========================
+   TARGET MEASUREMENT
+========================= */
+
+      function updateTargetMeasurement(detections) {
+        if (!targetMeasurement || !targetMeasurementList) {
+          return;
+        }
+
+        targetMeasurementList.innerHTML = "";
+
+        if (!Array.isArray(detections) || detections.length === 0) {
+          targetMeasurement.style.display = "none";
+          return;
+        }
+
+        let validCount = 0;
+
+        detections.forEach(function (item, index) {
+          if (!item || !Array.isArray(item.box) || item.box.length < 4) {
+            return;
+          }
+
+          const x1 = Number(item.box[0]);
+          const y1 = Number(item.box[1]);
+          const x2 = Number(item.box[2]);
+          const y2 = Number(item.box[3]);
+
+          if (![x1, y1, x2, y2].every(Number.isFinite)) {
+            return;
+          }
+
+          const width = Math.abs(x2 - x1);
+          const height = Math.abs(y2 - y1);
+          const centerX = (x1 + x2) / 2;
+          const centerY = (y1 + y2) / 2;
+
+          validCount += 1;
+
+          const card = document.createElement("div");
+          card.className = "target-measurement-item";
+
+          card.innerHTML = `
+            <div class="target-measurement-name">
+              🎯 Target #${index + 1} — ${String(item.class || "Object")}
+            </div>
+
+            <div class="target-measurement-row">
+              <span>Width</span>
+              <strong>${Math.round(width)} px</strong>
+            </div>
+
+            <div class="target-measurement-row">
+              <span>Height</span>
+              <strong>${Math.round(height)} px</strong>
+            </div>
+
+            <div class="target-measurement-row">
+              <span>Bounding Box</span>
+              <strong>${Math.round(x1)}, ${Math.round(y1)}, ${Math.round(x2)}, ${Math.round(y2)}</strong>
+            </div>
+
+            <div class="target-measurement-row">
+              <span>Estimated Target Size</span>
+              <strong>${Math.round(width)} × ${Math.round(height)} px</strong>
+            </div>
+
+            <div class="target-measurement-row">
+              <span>Measurement Unit</span>
+              <strong>px</strong>
+            </div>
+
+            <div class="target-measurement-row">
+              <span>Center Position</span>
+              <strong>${Math.round(centerX)}, ${Math.round(centerY)} px</strong>
+            </div>
+          `;
+
+          targetMeasurementList.appendChild(card);
+        });
+
+        targetMeasurement.style.display = validCount > 0 ? "block" : "none";
+      }
+
+      /* =========================
+   RESET
+========================= */
+
+      function resetDetection() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        compareCtx.clearRect(0, 0, compareCanvas.width, compareCanvas.height);
+
+        objects.textContent = "--";
+        confidence.textContent = "--";
+
+        analysis.textContent = "Ready";
+
+        detectionStatus.textContent = "Ready";
+        detectionStatus.style.color = "#19d37b";
+
+        const currentDetectionResult =
+          document.getElementById("detectionResult");
+
+        if (currentDetectionResult) {
+          currentDetectionResult.style.display = "none";
+
+          currentDetectionResult.innerHTML = `
+            <h3>
+                🎯 Detected Objects
+            </h3>
+
+            <div id="objectList">
+                <div class="empty-detection">
+                    📷 Upload a sonar image to begin detection.
+                </div>
+            </div>
+          `;
+        }
+
+        createInitialDetectionBlock();
+
+        lastDetections = [];
+
+        if (targetMeasurement && targetMeasurementList) {
+          targetMeasurement.style.display = "none";
+          targetMeasurementList.innerHTML = "";
+        }
+
+        comparisonActive = false;
+
+        closeComparisonPopup();
+
+        imageContainer.style.display = "inline-block";
+
+        compareBtn.style.display = "none";
+
+        compareBtn.classList.remove("active");
+
+        compareBtn.textContent = "🔀 Comparison";
+      }
+
+      /* =========================
+   DISPLAY SELECTED FILE
+========================= */
+
+      function handleSelectedFile(file) {
+        if (!file) {
+          return;
+        }
+
+        if (!file.type.startsWith("image/")) {
+          alert("Please select a valid image file.");
+          return;
+        }
+
+        selectedFile = file;
+
+        fileName.textContent = "Selected: " + getDisplayName(file.name);
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+          comparisonOriginalURL = event.target.result;
+
+          preview.src = event.target.result;
+
+          imageContainer.style.display = "inline-block";
+
+          preview.onload = function () {
+            canvas.width = preview.naturalWidth;
+            canvas.height = preview.naturalHeight;
+
+            canvas.style.width = preview.clientWidth + "px";
+
+            canvas.style.height = preview.clientHeight + "px";
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+          };
+        };
+
+        reader.readAsDataURL(file);
+
+        detectBtn.style.display = "inline-flex";
+
+        inputStatus.textContent = "Ready";
+        inputStatus.style.color = "#19d37b";
+
+        resetDetection();
+      }
+
+      /* =========================
+   DRAW BOXES
+========================= */
+
+      function drawBoxesOnCanvas(
+        targetCanvas,
+        targetCtx,
+        imageElement,
+        detections,
+      ) {
+        targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+
+        if (!detections || detections.length === 0) {
+          return;
+        }
+
+        const scaleX = targetCanvas.width / imageElement.naturalWidth;
+
+        const scaleY = targetCanvas.height / imageElement.naturalHeight;
+
+        const usedLabels = [];
+
+        detections.forEach(function (item) {
+          if (!item.box || item.box.length !== 4) {
+            return;
+          }
+
+          const box = item.box;
+
+          const x = box[0] * scaleX;
+          const y = box[1] * scaleY;
+
+          const width = (box[2] - box[0]) * scaleX;
+
+          const height = (box[3] - box[1]) * scaleY;
+
+          targetCtx.strokeStyle = "#19d37b";
+          targetCtx.lineWidth = 3;
+
+          targetCtx.strokeRect(x, y, width, height);
+
+          const name = String(item.class);
+
+          const percentage = Math.round(Number(item.confidence) * 100) + "%";
+
+          targetCtx.font = "bold 18px Arial";
+
+          const textWidth = Math.max(
+            targetCtx.measureText(name).width,
+            targetCtx.measureText(percentage).width,
+          );
+
+          const labelWidth = textWidth + 20;
+          const labelHeight = 24;
+          const gap = 5;
+          const totalHeight = labelHeight * 2 + gap;
+
+          let labelX = x;
+
+          let labelY = y - totalHeight - 6;
+
+          if (labelY < 0) {
+            labelY = y + height + 6;
+          }
+
+          function overlaps(a, b) {
+            return !(
+              a.right < b.left ||
+              a.left > b.right ||
+              a.bottom < b.top ||
+              a.top > b.bottom
+            );
+          }
+
+          let currentLabel = {
+            left: labelX,
+            top: labelY,
+            right: labelX + labelWidth,
+            bottom: labelY + totalHeight,
+          };
+
+          let attempts = 0;
+
+          while (
+            usedLabels.some(function (previous) {
+              return overlaps(currentLabel, previous);
+            }) &&
+            attempts < 20
+          ) {
+            labelY += totalHeight + 8;
+
+            if (labelY + totalHeight > targetCanvas.height) {
+              labelY = Math.max(0, y - totalHeight - 6);
+
+              labelX += labelWidth + 10;
+            }
+
+            if (labelX + labelWidth > targetCanvas.width) {
+              labelX = 0;
+            }
+
+            currentLabel = {
+              left: labelX,
+              top: labelY,
+              right: labelX + labelWidth,
+              bottom: labelY + totalHeight,
+            };
+
+            attempts++;
+          }
+
+          usedLabels.push(currentLabel);
+
+          targetCtx.fillStyle = "#19d37b";
+
+          targetCtx.fillRect(labelX, labelY, labelWidth, labelHeight);
+
+          targetCtx.fillStyle = "#00140b";
+
+          targetCtx.font = "bold 18px Arial";
+
+          targetCtx.fillText(name, labelX + 10, labelY + 18);
+
+          const confidenceY = labelY + labelHeight + gap;
+
+          targetCtx.fillStyle = "#071d2a";
+
+          targetCtx.fillRect(labelX, confidenceY, labelWidth, labelHeight);
+
+          targetCtx.strokeStyle = "#19d37b";
+
+          targetCtx.lineWidth = 1;
+
+          targetCtx.strokeRect(labelX, confidenceY, labelWidth, labelHeight);
+
+          targetCtx.fillStyle = "#19d37b";
+
+          targetCtx.font = "bold 18px Arial";
+
+          targetCtx.fillText(percentage, labelX + 10, confidenceY + 18);
+        });
+      }
+
+      function drawBoxes(detections) {
+        drawBoxesOnCanvas(canvas, ctx, preview, detections);
+      }
+
+      /* =========================
+   COMPARISON POPUP
+========================= */
+
+      function prepareComparisonImages() {
+        if (!comparisonOriginalURL || !preview.src) {
+          return;
+        }
+
+        originalCompareImage.src = comparisonOriginalURL;
+
+        sonarCompareImage.src = preview.src;
+
+        originalZoom = 100;
+        sonarZoom = 100;
+
+        originalZoomPercentage.value = 100;
+        sonarZoomPercentage.value = 100;
+
+        originalCompareImage.onload = function () {
+          requestAnimationFrame(function () {
+            applyOriginalZoom();
+          });
+        };
+
+        sonarCompareImage.onload = function () {
+          compareCanvas.width = sonarCompareImage.naturalWidth;
+
+          compareCanvas.height = sonarCompareImage.naturalHeight;
+
+          drawBoxesOnCanvas(
+            compareCanvas,
+            compareCtx,
+            sonarCompareImage,
+            lastDetections,
+          );
+
+          requestAnimationFrame(function () {
+            applySonarZoom();
+          });
+        };
+
+        if (originalCompareImage.complete) {
+          applyOriginalZoom();
+        }
+
+        if (sonarCompareImage.complete) {
+          compareCanvas.width = sonarCompareImage.naturalWidth;
+
+          compareCanvas.height = sonarCompareImage.naturalHeight;
+
+          drawBoxesOnCanvas(
+            compareCanvas,
+            compareCtx,
+            sonarCompareImage,
+            lastDetections,
+          );
+
+          applySonarZoom();
+        }
+      }
+
+      function openComparisonPopup() {
+        if (!lastDetections || lastDetections.length === 0) {
+          alert("Please complete AI Detection first.");
+
+          return;
+        }
+
+        comparisonPopup.style.display = "flex";
+
+        comparisonActive = true;
+
+        compareBtn.classList.add("active");
+
+        compareBtn.textContent = "👁 Show AI Result";
+
+        prepareComparisonImages();
+
+        setTimeout(function () {
+          applyOriginalZoom();
+          applySonarZoom();
+        }, 50);
+      }
+
+      function closeComparisonPopup(event) {
+        if (event && event.target !== comparisonPopup) {
+          return;
+        }
+
+        comparisonPopup.style.display = "none";
+
+        comparisonActive = false;
+
+        compareBtn.classList.remove("active");
+
+        compareBtn.textContent = "🔀 Comparison";
+      }
+
+      function toggleComparison() {
+        if (!lastDetections || lastDetections.length === 0) {
+          alert("Please complete AI Detection first.");
+
+          return;
+        }
+
+        if (comparisonActive) {
+          closeComparisonPopup();
+        } else {
+          openComparisonPopup();
+        }
+      }
+
+      compareBtn.addEventListener("click", toggleComparison);
+
+      /* =========================
+   FULL SCREEN
+========================= */
+
+      fullscreenBtn.addEventListener("click", async function () {
+        try {
+          if (!document.fullscreenElement) {
+            await comparisonPopupBox.requestFullscreen();
+
+            fullscreenBtn.textContent = "⛶ Exit Full Screen";
+          } else {
+            await document.exitFullscreen();
+
+            fullscreenBtn.textContent = "⛶ Full Screen";
+          }
+
+          setTimeout(function () {
+            applyOriginalZoom();
+            applySonarZoom();
+          }, 100);
+        } catch (error) {
+          console.error("Fullscreen Error:", error);
+        }
+      });
+
+      document.addEventListener("fullscreenchange", function () {
+        if (document.fullscreenElement) {
+          fullscreenBtn.textContent = "⛶ Exit Full Screen";
+        } else {
+          fullscreenBtn.textContent = "⛶ Full Screen";
+        }
+
+        setTimeout(function () {
+          applyOriginalZoom();
+          applySonarZoom();
+        }, 100);
+      });
+
+      /* =========================
+   ESCAPE KEY
+========================= */
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          if (comparisonPopup.style.display === "flex") {
+            if (document.fullscreenElement) {
+              document.exitFullscreen();
+            } else {
+              closeComparisonPopup();
+            }
+          }
+
+          document.getElementById("logoPopup").style.display = "none";
+        }
+      });
+
+      /* =========================
+   WINDOW RESIZE
+========================= */
+
+      window.addEventListener("resize", function () {
+        if (comparisonPopup.style.display === "flex") {
+          applyOriginalZoom();
+          applySonarZoom();
+        }
+      });
+
+      /* =========================
+   FILE INPUT
+========================= */
+
+      fileInput.addEventListener("change", function () {
+        const file = this.files[0];
+
+        handleSelectedFile(file);
+      });
+
+      /* =========================
+   DRAG & DROP
+========================= */
+
+      ["dragenter", "dragover"].forEach(function (eventName) {
+        uploadBox.addEventListener(eventName, function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          uploadBox.classList.add("drag-over");
+        });
+      });
+
+      ["dragleave", "drop"].forEach(function (eventName) {
+        uploadBox.addEventListener(eventName, function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          uploadBox.classList.remove("drag-over");
+        });
+      });
+
+      uploadBox.addEventListener("drop", function (event) {
+        const files = event.dataTransfer.files;
+
+        if (files && files.length > 0) {
+          handleSelectedFile(files[0]);
+        }
+      });
+
+      /* =========================
+   DETECTION BUTTON
+========================= */
+
+      detectBtn.addEventListener("click", startDetection);
+
+      /* =========================
+   START AI DETECTION
+========================= */
+
+      async function startDetection() {
+        const file = selectedFile;
+
+        if (!file) {
+          alert("Please select a sonar image first.");
+
+          return;
+        }
+
+        console.log("DETECTING FILE:", file.name);
+
+        const formData = new FormData();
+
+        formData.append("image", file);
+
+        analysis.textContent = "Processing...";
+
+        objects.textContent = "...";
+        confidence.textContent = "...";
+
+        detectionStatus.textContent = "Processing";
+
+        detectionStatus.style.color = "#00d9ff";
+
+        detectBtn.disabled = true;
+
+        detectBtn.classList.add("loading");
+
+        detectBtn.textContent = "⏳ Processing...";
+
+        try {
+          const response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            throw new Error("Server returned HTTP " + response.status);
+          }
+
+          const result = await response.json();
+
+          console.log("FULL RESULT:", result);
+
+          if (result.success) {
+            const detections = result.detections || [];
+
+            lastDetections = detections;
+
+            comparisonActive = false;
+
+            closeComparisonPopup();
+
+            imageContainer.style.display = "inline-block";
+
+            const oldReports = JSON.parse(
+              localStorage.getItem("aquascanReports") || "[]",
+            );
+
+            const analysisNumber = oldReports.length + 1;
+
+            oldReports.push({
+              analysisName: "Sonar Analysis #" + analysisNumber,
+
+              image: getDisplayName(file.name),
+
+              originalImage: file.name,
+
+              detections: detections,
+
+              targetMeasurements: detections
+                .map(function (item) {
+                  if (
+                    !item ||
+                    !Array.isArray(item.box) ||
+                    item.box.length < 4
+                  ) {
+                    return null;
+                  }
+
+                  const x1 = Number(item.box[0]);
+                  const y1 = Number(item.box[1]);
+                  const x2 = Number(item.box[2]);
+                  const y2 = Number(item.box[3]);
+
+                  if (![x1, y1, x2, y2].every(Number.isFinite)) {
+                    return null;
+                  }
+
+                  return {
+                    class: item.class || "Object",
+                    widthPx: Math.round(Math.abs(x2 - x1)),
+                    heightPx: Math.round(Math.abs(y2 - y1)),
+                    x1: Math.round(x1),
+                    y1: Math.round(y1),
+                    x2: Math.round(x2),
+                    y2: Math.round(y2),
+                    centerXPx: Math.round((x1 + x2) / 2),
+                    centerYPx: Math.round((y1 + y2) / 2),
+                  };
+                })
+                .filter(function (item) {
+                  return item !== null;
+                }),
+
+              time: new Date().toLocaleString(),
+
+              latitude: currentGPS.latitude,
+
+              longitude: currentGPS.longitude,
+            });
+
+            localStorage.setItem("aquascanReports", JSON.stringify(oldReports));
+
+            drawBoxes(detections);
+
+            updateTargetMeasurement(detections);
+
+            objects.textContent = detections.length;
+
+            if (detections.length > 0) {
+              const maxConfidence = Math.max(
+                ...detections.map(function (item) {
+                  return Number(item.confidence) || 0;
+                }),
+              );
+
+              confidence.textContent = Math.round(maxConfidence * 100) + "%";
+            } else {
+              confidence.textContent = "0%";
+            }
+
+            /* =========================
+               REMOVE INITIAL BLOCK
+            ========================= */
+
+            const initialDetectionResult = document.getElementById(
+              "initialDetectionResult",
+            );
+
+            if (initialDetectionResult) {
+              initialDetectionResult.remove();
+            }
+
+            /* =========================
+               UPDATE EXISTING RESULT
+            ========================= */
+
+            const currentDetectionResult =
+              document.getElementById("detectionResult");
+
+            if (currentDetectionResult) {
+              currentDetectionResult.style.display = "block";
+
+              currentDetectionResult.innerHTML = `
+                <h3>
+                  🎯 Detected Objects
+                </h3>
+
+                <div id="objectList"></div>
+              `;
+
+              detectionResult = currentDetectionResult;
+
+              objectList = currentDetectionResult.querySelector("#objectList");
+            }
+
+            if (detections.length > 0) {
+              detections.forEach(function (item) {
+                const row = document.createElement("div");
+
+                row.className = "detected-item";
+
+                const score = document.createElement("span");
+
+                score.className = "detected-confidence";
+
+                score.textContent =
+                  Math.round(Number(item.confidence) * 100) + "%";
+
+                const name = document.createElement("span");
+
+                name.className = "detected-name";
+
+                name.textContent = "🔹 " + item.class;
+
+                row.appendChild(score);
+
+                row.appendChild(name);
+
+                objectList.appendChild(row);
+              });
+            } else {
+              const emptyCard = document.createElement("div");
+
+              emptyCard.className = "detected-item";
+
+              const emptyConfidence = document.createElement("span");
+
+              emptyConfidence.className = "detected-confidence";
+
+              emptyConfidence.textContent = "0%";
+
+              const emptyName = document.createElement("span");
+
+              emptyName.className = "detected-name";
+
+              emptyName.textContent = "No objects detected";
+
+              emptyCard.appendChild(emptyConfidence);
+
+              emptyCard.appendChild(emptyName);
+
+              objectList.appendChild(emptyCard);
+            }
+
+            analysis.textContent = "Completed";
+
+            detectionStatus.textContent = "Completed";
+
+            detectionStatus.style.color = "#19d37b";
+
+            if (detections.length > 0) {
+              compareBtn.style.display = "inline-flex";
+            } else {
+              compareBtn.style.display = "none";
+            }
+
+            loadGallery();
+          } else {
+            analysis.textContent = "Failed";
+
+            detectionStatus.textContent = "Error";
+
+            detectionStatus.style.color = "#ff4d4d";
+          }
+        } catch (error) {
+          console.error("Detection Error:", error);
+
+          analysis.textContent = "Connection Error";
+
+          detectionStatus.textContent = "Offline";
+
+          detectionStatus.style.color = "#ff4d4d";
+        } finally {
+          detectBtn.disabled = false;
+
+          detectBtn.classList.remove("loading");
+
+          detectBtn.textContent = "🔍 Start AI Detection";
+        }
+      }
+
+      /* =========================
+         GPS LOCATION
+      ========================= */
+
+      function getGPSLocation() {
+        if (!navigator.geolocation) {
+          gpsStatus.textContent = "Not Supported";
+          gpsStatus.style.color = "#ff4d4d";
+          return;
+        }
+
+        gpsStatus.textContent = "Getting...";
+        gpsStatus.style.color = "#00d9ff";
+
+        getGpsBtn.disabled = true;
+        getGpsBtn.textContent = "⏳ Getting Location...";
+
+        navigator.geolocation.getCurrentPosition(
+          function (position) {
+            currentGPS.latitude = Number(position.coords.latitude.toFixed(6));
+
+            currentGPS.longitude = Number(position.coords.longitude.toFixed(6));
+
+            /* SAVE GPS LOCATION */
+            localStorage.setItem(
+              "aquascanGPS",
+              JSON.stringify({
+                latitude: currentGPS.latitude,
+                longitude: currentGPS.longitude,
+              }),
+            );
+
+            gpsLatitude.textContent = currentGPS.latitude;
+            gpsLongitude.textContent = currentGPS.longitude;
+
+            gpsStatus.textContent = "Available";
+            gpsStatus.style.color = "#19d37b";
+
+            getGpsBtn.disabled = false;
+            getGpsBtn.textContent = "📍 Update GPS Location";
+
+            viewGpsMapBtn.disabled = false;
+            viewGpsMapBtn.style.cursor = "pointer";
+          },
+
+          function (error) {
+            console.error("GPS Error:", error);
+
+            currentGPS.latitude = null;
+            currentGPS.longitude = null;
+
+            gpsLatitude.textContent = "--";
+            gpsLongitude.textContent = "--";
+
+            gpsStatus.textContent = "Permission Denied";
+            gpsStatus.style.color = "#ff4d4d";
+
+            getGpsBtn.disabled = false;
+            getGpsBtn.textContent = "📍 Get GPS Location";
+
+            viewGpsMapBtn.disabled = true;
+            viewGpsMapBtn.style.cursor = "not-allowed";
+          },
+
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
+          },
+        );
+      }
+
+      getGpsBtn.addEventListener("click", getGPSLocation);
+
+      /* =========================
+         RESTORE SAVED GPS
+      ========================= */
+
+      function restoreGPSLocation() {
+        const savedGPS = localStorage.getItem("aquascanGPS");
+
+        if (!savedGPS) {
+          return;
+        }
+
+        try {
+          const gps = JSON.parse(savedGPS);
+
+          if (
+            gps.latitude !== null &&
+            gps.latitude !== undefined &&
+            gps.longitude !== null &&
+            gps.longitude !== undefined
+          ) {
+            currentGPS.latitude = Number(gps.latitude);
+            currentGPS.longitude = Number(gps.longitude);
+
+            gpsLatitude.textContent = currentGPS.latitude;
+            gpsLongitude.textContent = currentGPS.longitude;
+
+            gpsStatus.textContent = "Available";
+            gpsStatus.style.color = "#19d37b";
+
+            getGpsBtn.disabled = false;
+            getGpsBtn.textContent = "📍 Update GPS Location";
+
+            viewGpsMapBtn.disabled = false;
+            viewGpsMapBtn.style.cursor = "pointer";
+          }
+        } catch (error) {
+          console.error("Saved GPS Error:", error);
+          localStorage.removeItem("aquascanGPS");
+        }
+      }
+
+      /* RESTORE GPS WHEN DASHBOARD OPENS */
+      restoreGPSLocation();
+
+      function viewGPSMap() {
+        if (currentGPS.latitude === null || currentGPS.longitude === null) {
+          return;
+        }
+
+        const mapURL =
+          "https://www.google.com/maps/search/?api=1&query=" +
+          encodeURIComponent(currentGPS.latitude + "," + currentGPS.longitude);
+
+        window.open(mapURL, "_blank", "noopener,noreferrer");
+      }
+      /* =========================
+   LOAD GALLERY
+========================= */
+
+      async function loadGallery() {
+        try {
+          const response = await fetch("/gallery");
+
+          if (!response.ok) {
+            throw new Error("Gallery server error");
+          }
+
+          const result = await response.json();
+
+          gallery.innerHTML = "";
+
+          if (result.success && result.images && result.images.length > 0) {
+            result.images.forEach(function (file) {
+              const displayName = getDisplayName(file);
+
+              const card = document.createElement("div");
+
+              card.className = "gallery-card";
+
+              const imageWrap = document.createElement("div");
+
+              imageWrap.className = "gallery-image-wrap";
+
+              const img = document.createElement("img");
+
+              img.src =
+                "/uploads/" + encodeURIComponent(file);
+
+              img.alt = "Sonar image: " + displayName;
+
+              img.loading = "lazy";
+
+              const overlay = document.createElement("div");
+
+              overlay.className = "gallery-overlay";
+
+              overlay.textContent = "Click to Analyze";
+
+              imageWrap.appendChild(img);
+
+              imageWrap.appendChild(overlay);
+
+              const nameRow = document.createElement("div");
+
+              nameRow.className = "gallery-name-row";
+
+              const name = document.createElement("div");
+
+              name.className = "gallery-name";
+
+              name.textContent = displayName;
+
+              const renameButton = document.createElement("button");
+
+              renameButton.type = "button";
+
+              renameButton.className = "rename-btn";
+
+              renameButton.textContent = "✏️";
+
+              renameButton.title = "Edit image name";
+
+              renameButton.addEventListener("click", function (event) {
+                event.stopPropagation();
+
+                renameGalleryImage(file);
+              });
+
+              nameRow.appendChild(name);
+
+              nameRow.appendChild(renameButton);
+
+              card.appendChild(imageWrap);
+
+              card.appendChild(nameRow);
+
+              card.addEventListener("click", function () {
+                loadGalleryImage(file);
+              });
+
+              gallery.appendChild(card);
+            });
+          } else {
+            gallery.innerHTML =
+              '<p class="gallery-message">' +
+              "No uploaded images yet." +
+              "</p>";
+          }
+        } catch (error) {
+          console.error("Gallery Error:", error);
+
+          gallery.innerHTML =
+            '<p class="gallery-message">' + "Unable to load gallery." + "</p>";
+        }
+      }
+
+      /* =========================
+   LOAD GALLERY IMAGE
+========================= */
+
+      async function loadGalleryImage(file) {
+        try {
+          const response = await fetch(
+            "/uploads/" + encodeURIComponent(file),
+          );
+
+          if (!response.ok) {
+            throw new Error("Unable to load gallery image");
+          }
+
+          const blob = await response.blob();
+
+          selectedFile = new File([blob], file, {
+            type: blob.type,
+          });
+
+          fileName.textContent = "Selected: " + getDisplayName(file);
+
+          inputStatus.textContent = "Gallery image selected";
+
+          inputStatus.style.color = "#19d37b";
+
+          detectBtn.style.display = "inline-flex";
+
+          objects.textContent = "--";
+
+          confidence.textContent = "--";
+
+          analysis.textContent = "Ready";
+
+          detectionStatus.textContent = "Ready";
+
+          detectionStatus.style.color = "#19d37b";
+
+          const currentDetectionResult =
+            document.getElementById("detectionResult");
+
+          if (currentDetectionResult) {
+            currentDetectionResult.style.display = "block";
+
+            currentDetectionResult.innerHTML = `
+                <h3>
+                    🎯 Detected Objects
+                </h3>
+
+                <div id="objectList">
+                    <div class="empty-detection">
+                        📷 Upload a sonar image to begin detection.
+                    </div>
+                </div>
+            `;
+
+            detectionResult = currentDetectionResult;
+
+            objectList = currentDetectionResult.querySelector("#objectList");
+          }
+
+          createInitialDetectionBlock();
+
+          lastDetections = [];
+
+          compareBtn.style.display = "none";
+
+          comparisonActive = false;
+
+          closeComparisonPopup();
+
+          compareBtn.classList.remove("active");
+
+          compareBtn.textContent = "🔀 Comparison";
+
+          imageContainer.style.display = "inline-block";
+
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          const imageURL = URL.createObjectURL(selectedFile);
+
+          comparisonOriginalURL = imageURL;
+
+          preview.onload = function () {
+            canvas.width = preview.naturalWidth;
+
+            canvas.height = preview.naturalHeight;
+
+            canvas.style.width = preview.clientWidth + "px";
+
+            canvas.style.height = preview.clientHeight + "px";
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+          };
+
+          preview.src = imageURL;
+
+          imageContainer.style.display = "inline-block";
+
+          uploadBox.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        } catch (error) {
+          console.error("Gallery Image Error:", error);
+        }
+      }
+
+      /* =========================
+   INITIAL GALLERY
+========================= */
+
+      loadGallery();
+    </script>
+  </body>
+</html>
